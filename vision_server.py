@@ -46,12 +46,12 @@ async def get_text_from_image(image_data: ImageList):
         detected_text = pic_to_text(image_data)
 
         # Get summary from GPT
-        # summary = get_summary_from_gpt(detected_text)
+        summary = get_summary_from_gpt(detected_text)
 
         results = []
 
         results.append({
-                # "summary": summary,
+                "summary": summary,
                 "original_response": detected_text
         })
             
@@ -61,11 +61,6 @@ async def get_text_from_image(image_data: ImageList):
 
     # return templates.TemplateResponse("result.html", {"request": request, "results": results})
     return results
-
-# @app.post("/pic_to_text", response_class=HTMLResponse)
-# async def get_text_from_image(image_data: ImageList):
-#         print(image_data.imageUrls)
-#         return {"received": image_data.imageUrls}
 
 '''
 # OCR 처리(image to text)

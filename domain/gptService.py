@@ -18,7 +18,7 @@ openai.api_key = openai_key_value
 
 def get_summary_from_gpt(response_dict):
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turbo-16k",
         messages=[
             {
                 "role": "assistant",
