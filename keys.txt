@@ -1,3 +1,0 @@
-openai.api_key = "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"
-key = 'AIzaSyCuNfSS6q5xlOSl7Vutxo4tQ29hnaFWhlA'
-openai.api_key_speech = "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"
