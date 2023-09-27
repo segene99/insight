@@ -1,32 +1,38 @@
 from typing import List
 import requests
 from google.cloud import vision as gvision
-from model import ImageURL
+from model import ImageList, ImageURL
 
-def pic_to_text(url: List[ImageURL]) -> str:
-    """Detects text in an image from a URL
+def pic_to_text(image_list: ImageList) -> List[str]:
+    """Detects text in images from URLs
 
     Args:
-    url: URL to the image file
+    image_list: List of URLs to the image files
 
     Returns:
-    String of text detected in image
+    List of strings of text detected in images
     """
-
-    # Download the image from the URL
-    response = requests.get(url)
-    image_content = response.content
-
+    
     # Instantiates a client
     client = gvision.ImageAnnotatorClient()
+    texts = []
 
-    # Create an Image object with the content
-    image = gvision.Image(content=image_content)
+    for image_url_obj in image_list.imageUrls:
+        # Extract the URL string
+        url = image_url_obj.url
+        
+        # Download the image from the URL
+        response = requests.get(url)
+        image_content = response.content
 
-    # For dense text, use document_text_detection
-    response = client.document_text_detection(image=image) # pylint: disable=no-member
-    text = response.full_text_annotation.text
+        # Create an Image object with the content
+        image = gvision.Image(content=image_content)
 
-    print(f"Detected text: {text}")
-            
-    return text
+        # For dense text, use document_text_detection
+        response = client.document_text_detection(image=image) # pylint: disable=no-member
+        text = response.full_text_annotation.text
+
+        # print(f"Detected text for {url}: {text}")
+        texts.append(text)
+
+    return texts

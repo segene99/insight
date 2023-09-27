@@ -4,6 +4,10 @@ from pydantic import BaseModel
 class ImageURL(BaseModel):
     url: str
 
+class ImageList(BaseModel):
+    imageUrls: List[ImageURL]
+
+
 class Turn(BaseModel):
     role: str
     content: str
