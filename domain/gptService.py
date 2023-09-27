@@ -30,7 +30,7 @@ def get_summary_from_gpt(response_dict):
             }
         ],
         temperature=1,
-        max_tokens=256,
+        max_tokens=5000,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0
