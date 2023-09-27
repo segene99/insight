@@ -15,7 +15,7 @@ import os
 # from PIL import Image
 from io import BytesIO
 from domain.ocrService import pic_to_text
-from model import ImageURL
+from model import ImageList, ImageURL
 from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
 
 
@@ -40,10 +40,10 @@ app.add_middleware(
 async def read_root(request: Request):
     return templates.TemplateResponse("main.html", {"request": request})
 
-@app.post("/pic_to_text", response_class=HTMLResponse)
-async def get_text_from_image(image_urls: List[ImageURL]):
+@app.post("/pic_to_text")
+async def get_text_from_image(image_data: ImageList):
     try:
-        detected_text = pic_to_text(image_urls)
+        detected_text = pic_to_text(image_data)
 
         # Get summary from GPT
         summary = get_summary_from_gpt(detected_text)
