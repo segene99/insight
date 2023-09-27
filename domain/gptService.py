@@ -7,8 +7,11 @@ def read_keys_from_file(filename):
         openai_key = lines[0].strip().split('=')[1].replace('"', '')
     return openai_key
 
+# keys.txt path
+keys_txt_path = 'key/keys.txt'
+
 # keys.txt 파일에서 API 키들을 가져옴
-openai_key_value = read_keys_from_file('keys.txt')
+openai_key_value = read_keys_from_file(keys_txt_path)
 
 # 가져온 키를 변수에 대입
 openai.api_key = openai_key_value

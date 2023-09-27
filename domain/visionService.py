@@ -10,8 +10,11 @@ def read_keys_from_file(filename):
         google_key = lines[1].strip().split('=')[1].replace('"', '')
     return google_key
 
+# keys.txt path
+keys_txt_path = 'key/keys.txt'
+
 # keys.txt 파일에서 API 키들을 가져옴
-google_key_value = read_keys_from_file('keys.txt')
+google_key_value = read_keys_from_file(keys_txt_path)
 
 # API키 fetch
 def read_google_api_key():
