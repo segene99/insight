@@ -41,9 +41,9 @@ async def read_root(request: Request):
     return templates.TemplateResponse("main.html", {"request": request})
 
 @app.post("/pic_to_text", response_class=HTMLResponse)
-async def get_text_from_image(request: Request, image_url: ImageURL):
+async def get_text_from_image(image_urls: List[ImageURL]):
     try:
-        detected_text = pic_to_text(image_url.url)
+        detected_text = pic_to_text(image_urls)
 
         # Get summary from GPT
         summary = get_summary_from_gpt(detected_text)
@@ -59,8 +59,8 @@ async def get_text_from_image(request: Request, image_url: ImageURL):
         raise HTTPException(status_code=500, detail=str(e))
         results.append({"error": str(e)})
 
-    return templates.TemplateResponse("result.html", {"request": request, "results": results})
-
+    # return templates.TemplateResponse("result.html", {"request": request, "results": results})
+    return results
 
 '''
 # OCR 처리(image to text)

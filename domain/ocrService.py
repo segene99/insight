@@ -1,7 +1,9 @@
+from typing import List
 import requests
 from google.cloud import vision as gvision
+from model import ImageURL
 
-def pic_to_text(url: str) -> str:
+def pic_to_text(url: List[ImageURL]) -> str:
     """Detects text in an image from a URL
 
     Args:
