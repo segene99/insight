@@ -3,6 +3,8 @@ import base64
 from typing import List
 # from bs4 import BeautifulSoup
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File
+from openai import Image
+import requests
 # from httpx import Timeout
 from domain.gptService import get_summary_from_gpt
 from domain.visionService import request_vision_api
@@ -40,6 +42,10 @@ app.add_middleware(
 async def read_root(request: Request):
     return templates.TemplateResponse("main.html", {"request": request})
 
+@app.get("/rag", response_class=HTMLResponse)
+async def go_to_rag():
+    return ""
+
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
@@ -62,7 +68,6 @@ async def get_text_from_image(image_data: ImageList):
     # return templates.TemplateResponse("result.html", {"request": request, "results": results})
     return results
 
-'''
 # OCR 처리(image to text)
 @app.post("/vision", response_class=HTMLResponse)
 async def vision(request: Request, images: List[UploadFile] = File(...)):
@@ -112,7 +117,7 @@ async def vision(request: Request, images: List[UploadFile] = File(...)):
             results.append({"error": str(e)})
 
     return templates.TemplateResponse("result.html", {"request": request, "results": results})
-'''
+
 
 # 현재 스크립트가 직접 실행될 때 uvicorn 서버를 시작하고, app 애플리케이션을 사용하여 8000 포트에서 웹 서비스를 제공
 if __name__ == '__main__':
