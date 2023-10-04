@@ -1,45 +1,60 @@
 import openai
 
+def read_keys_from_file(filename):
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        openai_key = lines[0].strip().split('=')[1].replace('"', '')
+    return openai_key
 
-def ask_gpt3_turbo(information, question):
-    # 모델에게 두 가지 메시지 전달: 시스템 메시지와 사용자 질문 메시지
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": question},
-        ],
-        temperature=0.0,
-        max_tokens=150
-    )
+import openai
 
-    # 모델이 생성한 응답
-    model_response = response.choices[0].message['content']
+# OpenAI API 키 설정
+openai.api_key = 'YOUR_OPENAI_API_KEY'
 
-    # 모델 응답이 information 텍스트와 관련 없는 경우 알림 메시지로 대체
-    if not is_response_relevant(model_response, information):
-        model_response = "해당 정보를 찾을 수 없습니다."
+MAX_TOKENS = 4096  # GPT-3.5 Turbo의 최대 토큰 수
+OVERLAP = 150  # 문맥을 유지하기 위한 overlap 토큰 수
 
-    return model_response
+def split_text_with_overlap(text, max_length, overlap):
+    tokens = text.split()
+    chunks = []
+    current_chunk = []
 
-def is_response_relevant(response, information):
-    # 응답에 information 텍스트와 관련된 단어가 포함되었는지 확인
-    response_words = response.split()
-    for word in response_words:
-        if word in information:
-            return True
-    return False
+    for token in tokens:
+        if len(' '.join(current_chunk) + ' ' + token) > max_length - overlap:
+            chunks.append(' '.join(current_chunk))
+            current_chunk = current_chunk[-overlap:]
+        current_chunk.append(token)
 
-if __name__ == "__main__":
-    # 긴 정보 텍스트
-    information = """
-    한국은 동아시아에 위치한 반도 국가로, 북쪽에는 북한, 서쪽에는 황해를 사이에 두고 중국, 남쪽에는 동해를 사이에 두고 일본과 맞닿아 있다. 
-    한국의 역사는 고대부터 시작되어, 다양한 왕조와 시대를 거치며 현재의 모습을 이루게 되었다. 
-    한국은 전통적으로 농업 사회였으며, 백제, 고구려, 신라와 같은 고대 국가들이 이 지역에서 번성하였다. 
-    현대에 들어서는 산업화와 더불어 빠른 경제 성장을 이루어냈고, 현재는 세계적인 경제 강국 중 하나로 자리매김하게 되었다.
-    """
+    chunks.append(' '.join(current_chunk))
+    return chunks
 
-    question = input("무엇을 찾아드릴까요?: ")
-    response = ask_gpt3_turbo(information, question)
+def get_gpt_response(ocr_text):
+    # 페르소나 설정
+    persona = "나는 친절하게 쇼핑 정보를 안내해주는 인공지능입니다."
+    
+    # 사용자에게 질문을 받기
+    question = input("무엇을 알려드릴까요? ")
+    
+    prompt = persona + "\n" + ocr_text + "\n질문: " + question + "\n답변: "
 
-    print("답변:", response)
+    # 텍스트 분할
+    chunks = split_text_with_overlap(prompt, MAX_TOKENS - OVERLAP, OVERLAP)
+    responses = []
+
+    for chunk in chunks:
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo",
+            prompt=chunk,
+            max_tokens=MAX_TOKENS,
+            n=1,
+            stop=None,
+            temperature=0.7
+        )
+        responses.append(response.choices[0].text.strip())
+
+    return ' '.join(responses)
+
+# 예시
+ocr_text = "..."  # 여기에 OCR로 얻은 텍스트를 넣어주세요
+answer = get_gpt_response(ocr_text)
+print(answer)
