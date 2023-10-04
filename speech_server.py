@@ -29,9 +29,23 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 
 
-def chat(messages):
+def chat(information,messages):
     # OpenAI의 GPT-3.5-turbo 모델을 사용하여 채팅 완성을 요청하고 응답을 받습니다.
-    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", 
+        messages=[
+            {
+                "role": "assistant",
+                "content": "전달받은 텍스트 안에서만 질문에 대한 대답을 해줘"
+            },
+                        {
+                "role": "system",
+                "content": str(messages)
+            }
+            ],
+            temperature=1,
+            top_p=1
+            )
     # OpenAI 응답을 딕셔너리 형태로 변환합니다.
     resp_dict = response.to_dict_recursive()
     # 어시스턴트의 응답을 추출합니다.
