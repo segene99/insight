@@ -1,3 +1,5 @@
+
+import os
 from typing import List
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
@@ -8,6 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from model import ImageURL, Turn, Messages
+from prompt import ask_gpt
 
 router = APIRouter()
 # router.mount("/static", StaticFiles(directory="static"), name="static")
@@ -30,14 +33,53 @@ openai.api_key = openai_key_value
 
 
 def chat(messages):
-    # OpenAI의 GPT-3.5-turbo 모델을 사용하여 채팅 완성을 요청하고 응답을 받습니다.
-    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    # # OpenAI의 GPT-3.5-turbo 모델을 사용하여 채팅 완성을 요청하고 응답을 받습니다.
+    # response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+
+    # Specify the path to the directory containing the text files
+    directory_path = 'detected_texts'
+
+    extracted_answer = messages[0]["content"]
+
+    # Load and concatenate OCR text from all the detected_text_*.txt files in the specified directory
+    ocr_data = load_all_texts(directory_path)
+    
+    # Call ask_gpt() function with the concatenated OCR text
+    answer = ask_gpt(extracted_answer, ocr_data)
+
+    print('=========', answer)
+
     # OpenAI 응답을 딕셔너리 형태로 변환합니다.
-    resp_dict = response.to_dict_recursive()
+    # resp_dict = response.to_dict_recursive()
+
+    result = { "role": "system", "content": answer }
+
+
     # 어시스턴트의 응답을 추출합니다.
-    assistant_turn = resp_dict['choices'][0]['message']
+    # assistant_turn = resp_dict['choices'][0]['message']
+
     # 어시스턴트의 응답을 반환합니다. {"role": "assistant", "content": "blahblahblah"} 형식으로 반환됩니다.
-    return assistant_turn 
+    return result 
+
+def load_all_texts(directory: str) -> str:
+    """
+    Load and concatenate text from all files in a directory.
+
+    Args:
+    directory: Path to the directory containing the text files
+
+    Returns:
+    The concatenated text content of the files
+    """
+    text = ""
+    for filename in os.listdir(directory):
+        if filename.startswith("detected_text") and filename.endswith(".txt"):
+            file_path = os.path.join(directory, filename)
+            with open(file_path, 'r', encoding='utf-8') as file:
+                text += file.read() + "\n"  # concatenate text and add a newline between texts from different files
+    return text
+
+
 
 @router.post("/chat", response_model=Turn)
 async def post_chat(messages: Messages):
