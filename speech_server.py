@@ -29,7 +29,7 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 
 
-def chat(information,messages):
+def chat(messages):
     # OpenAI의 GPT-3.5-turbo 모델을 사용하여 채팅 완성을 요청하고 응답을 받습니다.
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
@@ -38,10 +38,10 @@ def chat(information,messages):
                 "role": "assistant",
                 "content": "전달받은 텍스트 안에서만 질문에 대한 대답을 해줘"
             },
-                        {
+            {
                 "role": "system",
                 "content": str(messages)
-            }
+            },
             ],
             temperature=1,
             top_p=1
