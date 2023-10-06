@@ -3,10 +3,9 @@ import base64
 from typing import List
 # from bs4 import BeautifulSoup
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File
-from openai import Image
-import requests
 # from httpx import Timeout
 from domain.gptService import get_summary_from_gpt
+from domain.ragService import search_documents
 from domain.visionService import request_vision_api
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -17,8 +16,9 @@ import os
 # from PIL import Image
 from io import BytesIO
 from domain.ocrService import pic_to_text
-from model import ImageList, ImageURL
+from model import ImageList, ImageURL, Messages, Turn
 from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
+import logging
 
 
 # fastapi로 객체 생성
@@ -42,10 +42,51 @@ app.add_middleware(
 async def read_root(request: Request):
     return templates.TemplateResponse("main.html", {"request": request})
 
-@app.get("/rag", response_class=HTMLResponse)
-async def go_to_rag():
-    return ""
+@app.post("/pic_to_text")
+async def get_text_from_image(image_data: ImageList):
+    try:
+        detected_text = pic_to_text(image_data)
 
+        print("============" , detected_text)
+        # Get summary from GPT
+        # summary = get_summary_from_gpt(detected_text)
+
+        results = [{
+            # "summary": summary,
+            "original_response": detected_text,
+        }]
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    return results
+'''
+@app.post("/answer")
+async def get_answer_from_gpt(message_list: Messages):
+    try:
+        logging.info(f"Received messages: {message_list.messages}")
+
+        # Extract user input from the message list
+        user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
+        
+        if user_input is None:
+            raise HTTPException(status_code=400, detail="No user input found")
+        
+        # Search through saved text documents
+        most_similar_document_content = search_documents(user_input)
+
+        results = [{
+            "most_similar_document_content": most_similar_document_content
+        }]
+        logging.info(f"Sending response: {results}")
+        return results
+    
+    except Exception as e:
+        logging.error(f"An error occurred: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+'''
+
+'''
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
@@ -67,7 +108,8 @@ async def get_text_from_image(image_data: ImageList):
 
     # return templates.TemplateResponse("result.html", {"request": request, "results": results})
     return results
-
+'''
+'''
 # OCR 처리(image to text)
 @app.post("/vision", response_class=HTMLResponse)
 async def vision(request: Request, images: List[UploadFile] = File(...)):
@@ -117,10 +159,9 @@ async def vision(request: Request, images: List[UploadFile] = File(...)):
             results.append({"error": str(e)})
 
     return templates.TemplateResponse("result.html", {"request": request, "results": results})
-
+'''
 
 # 현재 스크립트가 직접 실행될 때 uvicorn 서버를 시작하고, app 애플리케이션을 사용하여 8000 포트에서 웹 서비스를 제공
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

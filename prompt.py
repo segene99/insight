@@ -1,45 +1,66 @@
 import openai
 
+# keys.txt 파일에서 API 키들을 읽어오는 함수
+def read_keys_from_file(filename):
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        openai_key = lines[0].strip().split('=')[1].replace('"', '')
+    return openai_key
 
-def ask_gpt3_turbo(information, question):
-    # 모델에게 두 가지 메시지 전달: 시스템 메시지와 사용자 질문 메시지
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": question},
-        ],
-        temperature=0.0,
-        max_tokens=150
-    )
+# keys.txt path
+keys_txt_path = 'key/keys.txt'
 
-    # 모델이 생성한 응답
-    model_response = response.choices[0].message['content']
+# keys.txt 파일에서 API 키들을 가져옴
+openai_key_value = read_keys_from_file(keys_txt_path)
 
-    # 모델 응답이 information 텍스트와 관련 없는 경우 알림 메시지로 대체
-    if not is_response_relevant(model_response, information):
-        model_response = "해당 정보를 찾을 수 없습니다."
+# 가져온 키를 변수에 대입
+openai.api_key = openai_key_value
+# 모델과 관련된 상수 설정
+MAX_TOKENS = 16000  # gpt-3.5-turbo 모델의 최대 토큰 수
+OVERLAP_TOKENS = 50  # 문장이 훼손되지 않게 하기 위한 오버랩 토큰 수
 
-    return model_response
+def split_text(text, max_length, overlap):
+    tokens = text.split()
+    chunks = []
 
-def is_response_relevant(response, information):
-    # 응답에 information 텍스트와 관련된 단어가 포함되었는지 확인
-    response_words = response.split()
-    for word in response_words:
-        if word in information:
-            return True
-    return False
+    current_chunk = []
+    current_length = 0
+    for token in tokens:
+        current_chunk.append(token)
+        current_length += len(token)
+        if current_length + overlap >= max_length:
+            chunks.append(' '.join(current_chunk))
+            current_chunk = current_chunk[-overlap:]
+            current_length = sum(len(t) for t in current_chunk)
+    
+    if current_chunk:
+        chunks.append(' '.join(current_chunk))
+    
+    return chunks
 
-if __name__ == "__main__":
-    # 긴 정보 텍스트
-    information = """
-    한국은 동아시아에 위치한 반도 국가로, 북쪽에는 북한, 서쪽에는 황해를 사이에 두고 중국, 남쪽에는 동해를 사이에 두고 일본과 맞닿아 있다. 
-    한국의 역사는 고대부터 시작되어, 다양한 왕조와 시대를 거치며 현재의 모습을 이루게 되었다. 
-    한국은 전통적으로 농업 사회였으며, 백제, 고구려, 신라와 같은 고대 국가들이 이 지역에서 번성하였다. 
-    현대에 들어서는 산업화와 더불어 빠른 경제 성장을 이루어냈고, 현재는 세계적인 경제 강국 중 하나로 자리매김하게 되었다.
-    """
+def ask_gpt(question, ocr_text):
+    text_chunks = split_text(ocr_text, MAX_TOKENS - 300, OVERLAP_TOKENS)
+    responses = []
 
-    question = input("무엇을 찾아드릴까요?: ")
-    response = ask_gpt3_turbo(information, question)
+    for chunk in text_chunks:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            temperature=0.1,  # 온도값 설정
+            messages=[
+                {"role": "system", "content": f"당신은 친절한 쇼핑 도우미입니다. 주어진 OCR 텍스트 안의 정보만을 기반으로 질문에 답하십시오.\n\n{chunk}"},
+                {"role": "user", "content": question}
+            ]
+        )
+        
+        response_text = response.choices[0].message['content'].strip()
+        responses.append(response_text)
 
-    print("답변:", response)
+    combined_response = ' '.join(responses)
+
+    # 사용자의 질문에 있는 키워드가 OCR 텍스트에 없고, GPT의 응답에 그 키워드가 포함되어 있는지 확인
+    question_keywords = question.split()
+    for keyword in question_keywords:
+        if keyword not in ocr_text and keyword in combined_response:
+            return "원하는 정보를 찾을 수 없습니다."
+
+    return combined_response
