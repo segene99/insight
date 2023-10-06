@@ -64,21 +64,17 @@ async def get_text_from_image(image_data: ImageList):
 @app.post("/answer")
 async def get_answer_from_gpt(message_list: Messages):
     try:
-        logging.info(f"Received messages: {message_list.messages}")
-
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         
-        if user_input is None:
-            raise HTTPException(status_code=400, detail="No user input found")
-        
         # Search through saved text documents
-        most_similar_document_content = search_documents(user_input)
+        text_received = search_documents(user_input)
 
-        results = [{
-            "most_similar_document_content": most_similar_document_content
-        }]
-        logging.info(f"Sending response: {results}")
+        # Extracting 'answer' content
+        answer_content = text_received['answer']
+
+        results = { "role": "user", "content": answer_content }
+
         return results
     
     except Exception as e:
