@@ -97,7 +97,6 @@ def search_documents(question, documents_path="/Users/segene/insight/detected_te
 
         print("********************", result)
 
-
         return result
 
     except IndexError as ie:
