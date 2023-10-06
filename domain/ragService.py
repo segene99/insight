@@ -50,10 +50,9 @@ def search_documents(question, documents_path="/Users/segene/insight/detected_te
         print("@@@@@@@@@@@@@@@@@@@@", documents)
 
         # split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
         texts = text_splitter.split_documents(documents)
 
-        
         # define embedding
         embeddings = OpenAIEmbeddings()
 
