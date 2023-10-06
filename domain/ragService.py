@@ -19,6 +19,9 @@ from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
+from sentence_transformers import SentenceTransformer
+
+
 
 
 
@@ -43,46 +46,44 @@ os.environ["OPENAI_API_KEY"] = openai.api_key
 
 def search_documents(question, documents_path="/Users/segene/insight/detected_texts/all_detected_texts.txt"):    
     try:  
-        # Load the documents and split them into chunks
+    # Load the documents and split them into chunks
         loader = TextLoader(documents_path)
         documents = loader.load()
         
         print("@@@@@@@@@@@@@@@@@@@@", documents)
 
-        # split documents
+    # split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
         texts = text_splitter.split_documents(documents)
 
-        # define embedding
+    # define embedding
         embeddings = OpenAIEmbeddings()
+        # model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
+        # embeddings = model.encode(texts)
 
-        # create vector database from data
+    # create vector database from data
         vector_db = Chroma.from_documents(texts, embeddings)
 
-        # select which embeddings we want to use
-        embeddings = OpenAIEmbeddings()
-
-
-        # expose this index in a retriever interface
+    # expose this index in a retriever interface
         retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
-        # define retriever
-        # similarity search
+    # define retriever
+    # similarity search
         docs = vector_db.similarity_search(question,k=3)
         
-        # Check if docs is non-empty
+    # Check if docs is non-empty
         if not docs:
             print("No documents found for similarity search.")
             return None
 
 
-        # chathistory memory 
+    # chathistory memory 
         memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
 
-        # 대화형 retrieval chain
+    # 대화형 retrieval chain
         qa = ConversationalRetrievalChain.from_llm(
             llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0), 
             chain_type="stuff", 
