@@ -60,7 +60,7 @@ async def get_text_from_image(image_data: ImageList):
         raise HTTPException(status_code=500, detail=str(e))
     
     return results
-'''
+
 @app.post("/answer")
 async def get_answer_from_gpt(message_list: Messages):
     try:
@@ -84,7 +84,6 @@ async def get_answer_from_gpt(message_list: Messages):
     except Exception as e:
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-'''
 
 '''
 @app.post("/pic_to_text")
