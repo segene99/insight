@@ -16,10 +16,13 @@ import os
 # from PIL import Image
 from io import BytesIO
 from domain.ocrService import pic_to_text
-from model import ImageList, ImageURL, Messages, Turn
+from model import ImageList, ImageURL, Messages, Turn, TextRequest
 from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
 import logging
 
+#TTS 임의로 세팅
+from google.cloud import texttospeech
+from fastapi.responses import JSONResponse
 
 # fastapi로 객체 생성
 app = FastAPI()
@@ -81,6 +84,67 @@ async def get_answer_from_gpt(message_list: Messages):
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Google Cloud Text-to-Speech 클라이언트 생성
+client = texttospeech.TextToSpeechClient()
+
+@app.post("/text-to-speech")
+async def get_audio_from_tts(text_request: TextRequest):
+    try:
+        # Text-to-Speech API 요청 생성
+        synthesis_input = texttospeech.SynthesisInput(text=text_request.text)
+
+        # VoiceSelectionParams 설정 (한국어)
+        voice = texttospeech.VoiceSelectionParams(
+            language_code="ko-KR",
+            name="ko-KR-Wavenet-A",
+        )
+        audio_config = texttospeech.AudioConfig(
+            audio_encoding=texttospeech.AudioEncoding.LINEAR16
+        )
+
+        # Text-to-Speech API 요청 보내기
+        response = client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+        )
+
+        # 오디오 파일을 저장
+        file_path = "output.wav"
+        with open(file_path, "wb") as audio_file:
+            audio_file.write(response.audio_content)
+
+        return FileResponse(file_path)
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+#     # Instantiates a client
+# client = texttospeech.TextToSpeechClient()
+
+# # Set the text input to be synthesized
+# synthesis_input = texttospeech.SynthesisInput(text="Hello, World!")
+
+# # Build the voice request, select the language code ("en-US") and the ssml
+# # voice gender ("neutral")
+# voice = texttospeech.VoiceSelectionParams(
+#     language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+# )
+
+# # Select the type of audio file you want returned
+# audio_config = texttospeech.AudioConfig(
+#     audio_encoding=texttospeech.AudioEncoding.MP3
+# )
+
+# # Perform the text-to-speech request on the text input with the selected
+# # voice parameters and audio file type
+# response = client.synthesize_speech(
+#     input=synthesis_input, voice=voice, audio_config=audio_config
+# )
+
+# # The response's audio_content is binary.
+# with open("output.mp3", "wb") as out:
+#     # Write the response to the output file.
+#     out.write(response.audio_content)
+#     print('Audio content written to file "output.mp3"')
 '''
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):

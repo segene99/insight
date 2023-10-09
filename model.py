@@ -16,4 +16,5 @@ class Messages(BaseModel):
     messages: List[Turn]  
     # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
 
-
+class TextRequest(BaseModel):
+    text: str

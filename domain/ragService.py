@@ -40,8 +40,12 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 os.environ["OPENAI_API_KEY"] = openai.api_key
 
-
-def search_documents(question, documents_path="/Users/segene/insight/detected_texts/all_detected_texts.txt"):    
+# base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
+# # 상위 디렉토리로 이동하여 insight 경로까지 접근
+# insight_dir = os.path.dirname(base_dir)
+# file_path = os.path.join(insight_dir, 'detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
+def search_documents(question, documents_path=file_path):    
     try:  
         # Load the documents and split them into chunks
         loader = TextLoader(documents_path)
