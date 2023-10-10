@@ -1,4 +1,4 @@
-#!/Users/segene/vision-api/venv/bin/python
+#!/Users/segene/insight/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

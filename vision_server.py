@@ -5,6 +5,7 @@ from typing import List
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 # from httpx import Timeout
 from domain.gptService import get_summary_from_gpt
+from domain.ragService import search_documents
 from domain.visionService import request_vision_api
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -15,8 +16,9 @@ import os
 # from PIL import Image
 from io import BytesIO
 from domain.ocrService import pic_to_text
-from model import ImageList, ImageURL
+from model import ImageList, ImageURL, Messages, Turn
 from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
+import logging
 
 
 # fastapi로 객체 생성
@@ -45,6 +47,54 @@ async def get_text_from_image(image_data: ImageList):
     try:
         detected_text = pic_to_text(image_data)
 
+        print("============" , detected_text)
+        # Get summary from GPT
+        # summary = get_summary_from_gpt(detected_text)
+
+        results = [{
+            # "summary": summary,
+            "original_response": detected_text,
+        }]
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    return results
+
+@app.post("/answer")
+async def get_answer_from_gpt(message_list: Messages):
+    try:
+        # Extract user input from the message list
+        user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
+        
+        base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
+        print("============base_dir==========",base_dir)
+        # 상위 디렉토리로 이동하여 insight 경로까지 접근
+        insight_dir = os.path.dirname(base_dir)
+        file_path = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+        print("============file_path==========",file_path)
+
+        # Search through saved text documents
+        text_received = search_documents(user_input, file_path)
+        print("============text_received==========",text_received)
+
+        # Extracting 'answer' content
+        answer_content = text_received['answer']
+
+        results = { "role": "user", "content": answer_content }
+
+        return results
+    
+    except Exception as e:
+        logging.error(f"An error occurred: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+'''
+@app.post("/pic_to_text")
+async def get_text_from_image(image_data: ImageList):
+    try:
+        detected_text = pic_to_text(image_data)
+
         # Get summary from GPT
         summary = get_summary_from_gpt(detected_text)
 
@@ -61,7 +111,7 @@ async def get_text_from_image(image_data: ImageList):
 
     # return templates.TemplateResponse("result.html", {"request": request, "results": results})
     return results
-
+'''
 '''
 # OCR 처리(image to text)
 @app.post("/vision", response_class=HTMLResponse)
