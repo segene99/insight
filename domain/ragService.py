@@ -40,6 +40,11 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 os.environ["OPENAI_API_KEY"] = openai.api_key
 
+
+# hugginface tokenizer 병렬처리 해제
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
 def search_documents(question, file_path):    
     try: 
 
@@ -56,7 +61,9 @@ def search_documents(question, file_path):
         # page_content = texts[0].page_content
 
     # define embedding
+        # openai
         # embeddings = OpenAIEmbeddings()
+        # paraphrase-multilingual-mpnet-base-v2
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
 
     # create vector database from data
@@ -85,7 +92,7 @@ def search_documents(question, file_path):
 
     # 대화형 retrieval chain
         qa = ConversationalRetrievalChain.from_llm(
-            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0), 
+            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0.2), 
             chain_type="stuff", 
             retriever=vector_retriever,
             memory=memory,
