@@ -1,5 +1,6 @@
 import os
 import traceback
+from chromadb.utils import embedding_functions
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
@@ -19,11 +20,7 @@ from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
-from sentence_transformers import SentenceTransformer
-
-
-
-
+from sentence_transformers import SentenceTransformer, util
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -43,41 +40,44 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 os.environ["OPENAI_API_KEY"] = openai.api_key
 
+def search_documents(question, file_path):    
+    try: 
 
-def search_documents(question, documents_path="/Users/segene/insight/detected_texts/all_detected_texts.txt"):    
-    try:  
     # Load the documents and split them into chunks
-        loader = TextLoader(documents_path)
+        loader = TextLoader(file_path)
         documents = loader.load()
         
-        print("@@@@@@@@@@@@@@@@@@@@", documents)
+        # print("@@@@@@@@@@@@@@@@@@@@", documents)
 
     # split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
         texts = text_splitter.split_documents(documents)
+        # print("*************", texts)
+        # page_content = texts[0].page_content
 
     # define embedding
-        embeddings = OpenAIEmbeddings()
-        # model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
-        # embeddings = model.encode(texts)
+        # embeddings = OpenAIEmbeddings()
+        embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
 
     # create vector database from data
-        vector_db = Chroma.from_documents(texts, embeddings)
-
-    # expose this index in a retriever interface
-        retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
+        # vector_db = Chroma.from_documents(texts, embeddings)
+        vector_db = Chroma.from_documents(texts, embedding_function)
 
     # define retriever
     # similarity search
         docs = vector_db.similarity_search(question,k=3)
-        
+        # print("++++++++++++", docs)
+        # answer = docs[0].page_content
+
     # Check if docs is non-empty
         if not docs:
             print("No documents found for similarity search.")
             return None
 
+    # expose this index in a retriever interface
+        vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
-    # chathistory memory 
+   # chathistory memory 
         memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
@@ -87,15 +87,13 @@ def search_documents(question, documents_path="/Users/segene/insight/detected_te
         qa = ConversationalRetrievalChain.from_llm(
             llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0), 
             chain_type="stuff", 
-            retriever=retriever,
+            retriever=vector_retriever,
             memory=memory,
             # return_source_documents=True,
             # return_generated_question=True,
         )
-
         result = qa({"question": question})
 
-        print("********************", result)
 
         return result
 
@@ -106,3 +104,5 @@ def search_documents(question, documents_path="/Users/segene/insight/detected_te
     except Exception as e:
         print("An unexpected error occurred:", str(e))
         traceback.print_exc()
+        print(f"Error: {str(e)}")
+        # Optionally, log or handle the error further

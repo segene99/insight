@@ -67,8 +67,16 @@ async def get_answer_from_gpt(message_list: Messages):
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         
+        base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
+        print("============base_dir==========",base_dir)
+        # 상위 디렉토리로 이동하여 insight 경로까지 접근
+        insight_dir = os.path.dirname(base_dir)
+        file_path = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+        print("============file_path==========",file_path)
+
         # Search through saved text documents
-        text_received = search_documents(user_input)
+        text_received = search_documents(user_input, file_path)
+        print("============text_received==========",text_received)
 
         # Extracting 'answer' content
         answer_content = text_received['answer']
