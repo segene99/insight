@@ -96,7 +96,7 @@ def extract_titles_from_ocr(ocr_text):
 # ocr에서 받은 텍스트라 가정
 ocr_data = """ 
 
-샘플 텍스트
+샘플 텍스트입니다아아아아아아ㅏ아아아아아아아아아아아ㅏ아아아아아
 
 
 """
