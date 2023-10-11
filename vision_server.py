@@ -52,27 +52,26 @@ async def get_text_from_image(image_data: ImageList):
 
         print("======detected_text======" , detected_text)
         # Get summary from GPT
-        print("======gpt summary 시작======")
+        # print("======gpt summary 시작======")
+        # summary = get_summary_from_gpt(detected_text)
+        # print("======summary======" , summary)
 
-        summary = get_summary_from_gpt(detected_text)
-        print("======summary======" , summary)
-
-        results = [{
-            "summary": summary
+        # results = [{
+            # "summary": summary
             # "original_response": detected_text,
-        }]
+        # }]
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-    return results
+    # return results
 
 @app.post("/answer")
 async def get_answer_from_gpt(message_list: Messages):
     try:
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
-        
+        print("============user_input==========",user_input)
         # 경로설정
         base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
         print("============base_dir==========",base_dir)
@@ -83,18 +82,17 @@ async def get_answer_from_gpt(message_list: Messages):
         # Search through saved text documents
         # Extracting 'answer' content
 
-        # Split the input into words
-        words = user_input.split()
-
-        if len(words) == 1:
-            text_received_keyword = search_keyword(user_input, file_path)
-            print("============text_received==========",text_received_keyword)
-            answer_content = text_received_keyword['answer']
-        else:
+        if ' ' in user_input:
+            print("============semantic search==========")
             text_received_semantic = search_documents(user_input, file_path)
             print("============text_received==========",text_received_semantic)
             answer_content = text_received_semantic['answer']
-
+        else:
+            print("============keyword search==========")
+            text_received_keyword = search_keyword(user_input, file_path)
+            print("============text_received==========",text_received_keyword)
+            answer_content = text_received_keyword['answer']
+            
         results = { "role": "user", "content": answer_content }
 
         return results

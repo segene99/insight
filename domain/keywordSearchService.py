@@ -2,17 +2,17 @@ from rank_bm25 import BM25Okapi
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
+
 def tokenizer(sent):
-    return sent.split(" ")
+    print("======타입=====", type(sent))
+    print("======텍스트=====", sent)
+    return sent.text.split(" ")
 
 
 def search_keyword(question, file_path):
-    # Load the documents and split them into chunks
-    loader = TextLoader(file_path)
-    documents = loader.load()
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
-    texts = text_splitter.split_documents(documents)
+    
+    with open('file_path', 'r', encoding='utf-8') as file:
+        texts = file.read()
 
     tokenized_corpus = [tokenizer(doc) for doc in texts]
 
