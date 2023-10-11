@@ -90,7 +90,7 @@ client = texttospeech.TextToSpeechClient()
 
 @app.post("/text-to-speech")
 async def text_to_speech(text_request: TextRequest):
-   
+
     try:
         response = get_audio_from_tts(text_request)
         return response
@@ -98,13 +98,6 @@ async def text_to_speech(text_request: TextRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-
-# Define an endpoint to delete audio files
-@app.post("/delete-audio-files")
-async def delete_audios():
-    
-    message = delete_audio_files()
-    return {"message": message}
 #     # Instantiates a client
 # client = texttospeech.TextToSpeechClient()
 
