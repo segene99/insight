@@ -1,5 +1,6 @@
 import os
 import traceback
+from chromadb.utils import embedding_functions
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
@@ -19,8 +20,13 @@ from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
+from sentence_transformers import SentenceTransformer, util
 
-
+# Create memory outside the function to preserve chat history
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -40,67 +46,66 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 os.environ["OPENAI_API_KEY"] = openai.api_key
 
-# base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
 
-# # 상위 디렉토리로 이동하여 insight 경로까지 접근
-# insight_dir = os.path.dirname(base_dir)
+# hugginface tokenizer 병렬처리 해제
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
 
-def search_documents(question, documents_path=file_path):    
-    try:  
-        # Load the documents and split them into chunks
-        loader = TextLoader(documents_path)
+def search_documents(question, file_path):    
+    try: 
+
+    # Load the documents and split them into chunks
+        loader = TextLoader(file_path)
         documents = loader.load()
         
-        print("@@@@@@@@@@@@@@@@@@@@", documents)
+        # print("@@@@@@@@@@@@@@@@@@@@", documents)
 
-        # split documents
+    # split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
         texts = text_splitter.split_documents(documents)
+        # print("*************", texts)
+        # page_content = texts[0].page_content
 
-        # define embedding
-        embeddings = OpenAIEmbeddings()
+    # define embedding
+        # openai
+        # embeddings = OpenAIEmbeddings()
+        # paraphrase-multilingual-mpnet-base-v2
+        embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
 
-        # create vector database from data
-        vector_db = Chroma.from_documents(texts, embeddings)
+    # create vector database from data
+        # vector_db = Chroma.from_documents(texts, embeddings)
+        vector_db = Chroma.from_documents(texts, embedding_function)
 
-        # select which embeddings we want to use
-        embeddings = OpenAIEmbeddings()
+    # define retriever
+    # similarity search
+        # docs = vector_db.similarity_search(question,k=3)
+        # print("++++++++++++", docs)
+        # answer = docs[0].page_content
 
+    # Check if docs is non-empty
+        # if not docs:
+        #     print("No documents found for similarity search.")
+        #     return None
 
-        # expose this index in a retriever interface
-        retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
+    # expose this index in a retriever interface
+        vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
-        # define retriever
-        # similarity search
-        docs = vector_db.similarity_search(question,k=3)
-        
-        # Check if docs is non-empty
-        if not docs:
-            print("No documents found for similarity search.")
-            return None
+   # chathistory memory 
+        # memory = ConversationBufferMemory(
+        #     memory_key="chat_history",
+        #     return_messages=True
+        # )
 
-
-        # chathistory memory 
-        memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True
-        )
-
-        # 대화형 retrieval chain
+    # 대화형 retrieval chain
         qa = ConversationalRetrievalChain.from_llm(
-            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0), 
+            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0.2), 
             chain_type="stuff", 
-            retriever=retriever,
+            retriever=vector_retriever,
             memory=memory,
             # return_source_documents=True,
             # return_generated_question=True,
         )
-
         result = qa({"question": question})
-
-        print("********************", result)
 
         return result
 
@@ -111,3 +116,5 @@ def search_documents(question, documents_path=file_path):
     except Exception as e:
         print("An unexpected error occurred:", str(e))
         traceback.print_exc()
+        print(f"Error: {str(e)}")
+        # Optionally, log or handle the error further
