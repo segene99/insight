@@ -3,6 +3,8 @@ import requests
 from google.cloud import vision as gvision
 from typing import List
 from model import ImageList, ImageURL
+from google.cloud import vision_v1p4beta1
+
 
 def pic_to_text(image_list: ImageList) -> List[str]:
     """Detects text in images from URLs
