@@ -1,7 +1,8 @@
 import os
+import traceback
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 import openai
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -16,7 +17,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-
+from langchain.memory import ConversationBufferMemory
+from langchain.chat_models import ChatOpenAI
 
 
 
@@ -38,45 +40,74 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 os.environ["OPENAI_API_KEY"] = openai.api_key
 
-class CustomTextLoader:
-    def __init__(self, directory_path):
-        self.directory_path = directory_path
+# base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
 
-    def load(self):
-        txt_files = [f for f in os.listdir(self.directory_path) if f.endswith('.txt')]
-        documents = []
-        for file_name in txt_files:
-            file_path = os.path.join(self.directory_path, file_name)
-            with open(file_path, 'r', encoding='utf-8') as file:
-                text = file.read()
-                documents.append({
-                    'page_content': text,
-                    'url': file_path
-                })
-        return documents
+# # 상위 디렉토리로 이동하여 insight 경로까지 접근
+# insight_dir = os.path.dirname(base_dir)
+
+file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
+
+def search_documents(question, documents_path=file_path):    
+    try:  
+        # Load the documents and split them into chunks
+        loader = TextLoader(documents_path)
+        documents = loader.load()
+        
+        print("@@@@@@@@@@@@@@@@@@@@", documents)
+
+        # split documents
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+        texts = text_splitter.split_documents(documents)
+
+        # define embedding
+        embeddings = OpenAIEmbeddings()
+
+        # create vector database from data
+        vector_db = Chroma.from_documents(texts, embeddings)
+
+        # select which embeddings we want to use
+        embeddings = OpenAIEmbeddings()
 
 
-def search_documents(query, documents_path="detected_texts"):    
-    # Load the documents and split them into chunks
-    loader = CustomTextLoader(documents_path)
-    documents = loader.load()
+        # expose this index in a retriever interface
+        retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
+
+        # define retriever
+        # similarity search
+        docs = vector_db.similarity_search(question,k=3)
+        
+        # Check if docs is non-empty
+        if not docs:
+            print("No documents found for similarity search.")
+            return None
+
+
+        # chathistory memory 
+        memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True
+        )
+
+        # 대화형 retrieval chain
+        qa = ConversationalRetrievalChain.from_llm(
+            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0), 
+            chain_type="stuff", 
+            retriever=retriever,
+            memory=memory,
+            # return_source_documents=True,
+            # return_generated_question=True,
+        )
+
+        result = qa({"question": question})
+
+        print("********************", result)
+
+        return result
+
+    except IndexError as ie:
+        print("IndexError occurred:", str(ie))
+        traceback.print_exc()
     
-    # split the documents into chunks
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    texts = text_splitter.split_documents(documents)
-
-    # select which embeddings we want to use
-    embeddings = OpenAIEmbeddings()
-
-    # create the vectorestore to use as the index
-    db = Chroma.from_documents(texts, embeddings)
-
-    # expose this index in a retriever interface
-    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":3})
-
-    # create a chain to answer questions 
-    qa = RetrievalQA.from_chain_type(
-        llm=OpenAI(), chain_type="map_reduce", retriever=retriever, return_source_documents=True)
-    result = qa({"query": query})
-    print(result['result'])
-    return result
+    except Exception as e:
+        print("An unexpected error occurred:", str(e))
+        traceback.print_exc()
