@@ -67,7 +67,7 @@ async def get_text_from_image(image_data: ImageList):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+    return "ocr 완료"
     # return results
 
 @app.post("/answer")
