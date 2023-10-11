@@ -23,7 +23,7 @@ import logging
 #TTS 임의로 세팅
 from google.cloud import texttospeech
 from fastapi.responses import JSONResponse
-from domain.ttsService import get_audio_from_tts
+from domain.ttsService import get_audio_from_tts, delete_audio_files
 
 # fastapi로 객체 생성
 app = FastAPI()
@@ -101,26 +101,10 @@ async def text_to_speech(text_request: TextRequest):
 
 # Define an endpoint to delete audio files
 @app.post("/delete-audio-files")
-async def delete_audio_files():
-    folder_path = 'tts_audio'  # Specify the folder path here
-
-    # Check if the folder exists, and if not, create it
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path, exist_ok=True)
-
-    # Get a list of all files in the folder
-    file_list = os.listdir(folder_path)
-
-    # Delete each file in the folder
-    for file_name in file_list:
-        file_path = os.path.join(folder_path, file_name)
-        try:
-            os.remove(file_path)
-            print(f"{file_path} 파일이 삭제되었습니다.")
-        except Exception as e:
-            print(f"{file_path} 파일 삭제 중 오류 발생: {str(e)}")
-
-    return {"message": "Audio files have been deleted successfully"}
+async def delete_audios():
+    
+    message = delete_audio_files()
+    return {"message": message}
 #     # Instantiates a client
 # client = texttospeech.TextToSpeechClient()
 
