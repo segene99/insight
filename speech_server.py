@@ -44,6 +44,8 @@ def chat(messages):
     # Load and concatenate OCR text from all the detected_text_*.txt files in the specified directory
     ocr_data = load_all_texts(directory_path)
     
+    print("^^^^^", ocr_data)
+
     # Call ask_gpt() function with the concatenated OCR text
     answer = ask_gpt(extracted_answer, ocr_data)
 
@@ -73,7 +75,7 @@ def load_all_texts(directory: str) -> str:
     """
     text = ""
     for filename in os.listdir(directory):
-        if filename.startswith("detected_text") and filename.endswith(".txt"):
+        if filename.startswith("all_detected_texts") and filename.endswith(".txt"):
             file_path = os.path.join(directory, filename)
             with open(file_path, 'r', encoding='utf-8') as file:
                 text += file.read() + "\n"  # concatenate text and add a newline between texts from different files

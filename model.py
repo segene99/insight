@@ -1,5 +1,6 @@
 from typing import List
 from pydantic import BaseModel
+from langchain.memory import ConversationBufferMemory
 
 class ImageURL(BaseModel):
     url: str

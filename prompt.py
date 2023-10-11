@@ -15,6 +15,7 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 
 # 가져온 키를 변수에 대입
 openai.api_key = openai_key_value
+
 # 모델과 관련된 상수 설정
 MAX_TOKENS = 16000  # gpt-3.5-turbo 모델의 최대 토큰 수
 OVERLAP_TOKENS = 50  # 문장이 훼손되지 않게 하기 위한 오버랩 토큰 수
@@ -74,19 +75,3 @@ def ask_gpt(question, ocr_text):
         break  # 첫 번째 청크에 대한 응답만 사용하도록 break 추가
 
     return responses[0]
-
-
-
-
-# 사용자로부터 질문 받기
-# user_input = input("무엇을 도와드릴까요? ")
-# #ocr에서 받은 텍스트라 가정
-# ocr_data = """ 샘필 테스트 입니다. """
-
-# answer = ask_gpt(user_input, ocr_data)
-# print(answer)
-
-# if not answer:  # 만약 답변이 없다면
-#     answer = "원하는 정보를 찾을 수 없습니다."
-
-# print("answer",answer)
