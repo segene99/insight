@@ -23,6 +23,7 @@ import logging
 #TTS 임의로 세팅
 from google.cloud import texttospeech
 from fastapi.responses import JSONResponse
+from domain.ttsService import get_audio_from_tts
 
 # fastapi로 객체 생성
 app = FastAPI()
@@ -88,35 +89,38 @@ async def get_answer_from_gpt(message_list: Messages):
 client = texttospeech.TextToSpeechClient()
 
 @app.post("/text-to-speech")
-async def get_audio_from_tts(text_request: TextRequest):
+async def text_to_speech(text_request: TextRequest):
+   
     try:
-        # Text-to-Speech API 요청 생성
-        synthesis_input = texttospeech.SynthesisInput(text=text_request.text)
-
-        # VoiceSelectionParams 설정 (한국어)
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="ko-KR",
-            name="ko-KR-Wavenet-A",
-        )
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.LINEAR16
-        )
-
-        # Text-to-Speech API 요청 보내기
-        response = client.synthesize_speech(
-            input=synthesis_input, voice=voice, audio_config=audio_config
-        )
-
-        # 오디오 파일을 저장
-        file_path = "output.wav"
-        with open(file_path, "wb") as audio_file:
-            audio_file.write(response.audio_content)
-
-        return FileResponse(file_path)
+        response = get_audio_from_tts(text_request)
+        return response
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+
+# Define an endpoint to delete audio files
+@app.post("/delete-audio-files")
+async def delete_audio_files():
+    folder_path = 'tts_audio'  # Specify the folder path here
+
+    # Check if the folder exists, and if not, create it
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path, exist_ok=True)
+
+    # Get a list of all files in the folder
+    file_list = os.listdir(folder_path)
+
+    # Delete each file in the folder
+    for file_name in file_list:
+        file_path = os.path.join(folder_path, file_name)
+        try:
+            os.remove(file_path)
+            print(f"{file_path} 파일이 삭제되었습니다.")
+        except Exception as e:
+            print(f"{file_path} 파일 삭제 중 오류 발생: {str(e)}")
+
+    return {"message": "Audio files have been deleted successfully"}
 #     # Instantiates a client
 # client = texttospeech.TextToSpeechClient()
 
