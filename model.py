@@ -1,5 +1,6 @@
 from typing import List
 from pydantic import BaseModel
+from langchain.memory import ConversationBufferMemory
 
 class ImageURL(BaseModel):
     url: str
@@ -15,3 +16,4 @@ class Turn(BaseModel):
 class Messages(BaseModel):
     messages: List[Turn]  
     # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
+

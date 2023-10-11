@@ -22,15 +22,15 @@ def get_summary_from_gpt(response_dict):
         messages=[
             {
                 "role": "assistant",
-                "content": "받은 내용을 정리해줘. 내용을 빼먹으면 안돼"
+                "content": "소주제 5가지 단어로 줘"
             },
             {
                 "role": "system",
                 "content": str(response_dict)
             }
         ],
-        temperature=1,
-        max_tokens=5000,
+        temperature=0.3,
+        max_tokens=500,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0
