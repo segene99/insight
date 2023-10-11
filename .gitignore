@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 # Ignore Python compiled files
 *.pyc
 __pycache__/
 
 # Ignore virtual environment
 venv/
+=======
+venv/
+__pycache__/
+*.pyc
+>>>>>>> main

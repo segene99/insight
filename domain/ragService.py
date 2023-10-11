@@ -46,16 +46,14 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 openai.api_key = openai_key_value
 os.environ["OPENAI_API_KEY"] = openai.api_key
 
-
 # hugginface tokenizer 병렬처리 해제
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-
-def search_documents(question, file_path):    
-    try: 
-
-    # Load the documents and split them into chunks
-        loader = TextLoader(file_path)
+file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
+def search_documents(question, documents_path=file_path):    
+    try:  
+        # Load the documents and split them into chunks
+        loader = TextLoader(documents_path)
         documents = loader.load()
         
         # print("@@@@@@@@@@@@@@@@@@@@", documents)

@@ -15,7 +15,7 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     Returns:
     List of strings of text detected in images
     """
-    
+   
     # Instantiates a client
     client = gvision.ImageAnnotatorClient()
     texts = []
