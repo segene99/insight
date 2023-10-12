@@ -18,16 +18,16 @@ def search_keyword(question, file_path):
 
     bm25 = BM25Okapi(tokenized_corpus) # bm25 인스턴스
 
-    # print("====파싱된 문서의 길이====",bm25.doc_len) #doc_len : 파싱된 문서의 길이
+    print("====파싱된 문서의 길이====",bm25.doc_len) #doc_len : 파싱된 문서의 길이
     # print("====inverse term 빈도수====",bm25.doc_freqs) #freqs: 문서에 있는 각각의 토큰의 빈도 (각 문서 내에서 딕셔너리 형태로 저장)
     # print("====inverse term 빈도수====",bm25.idf) # idf: 토큰의 inverse term frequency를 계산해둠
 
-    tokenized_query = tokenizer(question) #토큰화
-    print("====토큰화된 질문====",tokenized_query)
+    # tokenized_query = tokenizer(question) #토큰화
+    # print("====토큰화된 질문====",tokenized_query)
 
-    doc_scores = bm25.get_scores(tokenized_query) #점수반환
+    doc_scores = bm25.get_scores(question) #점수반환
     print("====점수====",doc_scores)
-    answer = bm25.get_top_n(tokenized_query, texts, n=2) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
+    answer = bm25.get_top_n(question, texts, n=2) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
     answer_str = ' '.join(answer)
 
     return answer_str

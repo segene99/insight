@@ -23,7 +23,7 @@ def get_summary_from_gpt(response_dict):
         messages=[
             {
                 "role": "assistant",
-                "content": "상품 정보 제공 고시 내용은 빼지말고 요약해줘"
+                "content": "상품 정보 제공 고시 내용은 빼지말고 요약해줘. 빨리 대답해줘"
             },
             {
                 "role": "system",
