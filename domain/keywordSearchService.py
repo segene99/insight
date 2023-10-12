@@ -11,7 +11,7 @@ def tokenizer(sent):
 
 def search_keyword(question, file_path):
     
-    with open('file_path', 'r', encoding='utf-8') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         texts = file.read()
 
     tokenized_corpus = [tokenizer(doc) for doc in texts]

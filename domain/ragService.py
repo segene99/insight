@@ -6,17 +6,10 @@ from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddi
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 import openai
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.chains import ConversationalRetrievalChain
 from langchain.chains import ConversationalRetrievalChain
 from langchain.llms import OpenAI
 from langchain.document_loaders import TextLoader
-from langchain.document_loaders import PyPDFLoader
 from langchain.indexes import VectorstoreIndexCreator
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
