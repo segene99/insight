@@ -1,3 +1,4 @@
+import os
 import openai
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -22,7 +23,7 @@ def get_summary_from_gpt(response_dict):
         messages=[
             {
                 "role": "assistant",
-                "content": "소주제 5가지 단어로 줘"
+                "content": "상품 정보 제공 고시 내용은 빼지말고 요약해줘"
             },
             {
                 "role": "system",
@@ -35,4 +36,14 @@ def get_summary_from_gpt(response_dict):
         frequency_penalty=0,
         presence_penalty=0
     )
+
+     # Create a directory to store the text file if it doesn't exist
+    os.makedirs('detected_texts', exist_ok=True)
+
+    # Save all the detected text to a single txt file
+    file_path = os.path.join('detected_texts', 'summary.txt')
+    with open(file_path, 'w', encoding='utf-8') as file:
+        # Join all the texts with a space separator and write to the file
+        file.write(" ".join(response.choices[0].message['content']))
+
     return response.choices[0].message['content']

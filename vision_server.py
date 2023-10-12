@@ -51,14 +51,14 @@ async def read_root(request: Request):
 async def get_text_from_image(image_data: ImageList):
     try:
         print("======pic_to_text 시작======")
-
         detected_text = pic_to_text(image_data)
-
         print("======detected_text======" , detected_text)
+
         # Get summary from GPT
-        # print("======gpt summary 시작======")
-        # summary = get_summary_from_gpt(detected_text)
-        # print("======summary======" , summary)
+        print("======gpt summary 시작======")
+        summary = get_summary_from_gpt(detected_text)
+        
+        print("======summary======" , summary)
 
         # results = [{
             # "summary": summary
@@ -81,7 +81,9 @@ async def get_answer_from_gpt(message_list: Messages):
         print("============base_dir==========",base_dir)
         insight_dir = os.path.dirname(base_dir) # 상위 디렉토리로 이동하여 insight 경로까지 접근
         file_path = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+        file_path_sum = os.path.join(insight_dir, 'insight/detected_texts', 'summary.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
         print("============file_path==========",file_path)
+        print("============file_path_sum==========",file_path_sum)
 
         # Search through saved text documents
         # Extracting 'answer' content
@@ -93,9 +95,9 @@ async def get_answer_from_gpt(message_list: Messages):
             answer_content = text_received_semantic['answer']
         else:
             print("============keyword search==========")
-            text_received_keyword = search_keyword(user_input, file_path)
+            text_received_keyword = search_keyword(user_input, file_path_sum)
             print("============text_received==========",text_received_keyword)
-            answer_content = text_received_keyword['answer']
+            answer_content = text_received_keyword
             
         results = { "role": "user", "content": answer_content }
 
