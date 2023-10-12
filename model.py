@@ -7,7 +7,7 @@ class ImageURL(BaseModel):
 
 class ImageList(BaseModel):
     imageUrls: List[ImageURL]
-
+    
 
 class Turn(BaseModel):
     role: str

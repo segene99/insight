@@ -55,10 +55,9 @@ async def get_text_from_image(image_data: ImageList):
         print("======detected_text======" , detected_text)
 
         # Get summary from GPT
-        print("======gpt summary 시작======")
-        summary = get_summary_from_gpt(detected_text)
-        
-        print("======summary======" , summary)
+        # print("======gpt summary 시작======")
+        # summary = get_summary_from_gpt(detected_text)
+        # print("======summary======" , summary)
 
         # results = [{
             # "summary": summary

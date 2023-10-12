@@ -16,10 +16,10 @@ from langchain.chat_models import ChatOpenAI
 from sentence_transformers import SentenceTransformer, util
 
 # Create memory outside the function to preserve chat history
-memory = ConversationBufferMemory(
-    memory_key="chat_history",
-    return_messages=True
-)
+# memory = ConversationBufferMemory(
+#     memory_key="chat_history",
+#     return_messages=True
+# )
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -48,11 +48,10 @@ def search_documents(question, documents_path=file_path):
         # Load the documents and split them into chunks
         loader = TextLoader(documents_path)
         documents = loader.load()
-        
         # print("@@@@@@@@@@@@@@@@@@@@", documents)
 
     # split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
         texts = text_splitter.split_documents(documents)
         # print("*************", texts)
         # page_content = texts[0].page_content
@@ -69,6 +68,7 @@ def search_documents(question, documents_path=file_path):
 
     # define retriever
     # similarity search
+        # docs_mmr = vector_db.max_marginal_relevance_search(question,k=3)        
         # docs = vector_db.similarity_search(question,k=3)
         # print("++++++++++++", docs)
         # answer = docs[0].page_content
@@ -82,14 +82,14 @@ def search_documents(question, documents_path=file_path):
         vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
    # chathistory memory 
-        # memory = ConversationBufferMemory(
-        #     memory_key="chat_history",
-        #     return_messages=True
-        # )
+        memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True
+        )
 
     # 대화형 retrieval chain
         qa = ConversationalRetrievalChain.from_llm(
-            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0.2), 
+            llm=ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0.1), 
             chain_type="stuff", 
             retriever=vector_retriever,
             memory=memory,
