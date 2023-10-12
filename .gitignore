@@ -2,3 +2,4 @@
 __pycache__
 /key/keys.txt
 *.pyc
+__pycache__/
