@@ -48,7 +48,6 @@ def search_documents(question, documents_path=file_path):
         # Load the documents and split them into chunks
         loader = TextLoader(documents_path)
         documents = loader.load()
-        
         # print("@@@@@@@@@@@@@@@@@@@@", documents)
 
     # split documents
