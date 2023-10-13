@@ -4,6 +4,8 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi import HTTPException
 from model import TextRequest
+from langdetect import detect
+
 # Google Cloud Text-to-Speech 클라이언트 생성
 client = texttospeech.TextToSpeechClient()
 
@@ -22,19 +24,41 @@ def get_audio_from_tts(text: TextRequest):
         </speak>
     """
     try:
+
+        # user_text가 어떤 언어인지 감지
+        user_text_language = detect(user_text)
+
         # Text-to-Speech API 요청 생성
         synthesis_input = texttospeech.SynthesisInput(ssml=ssml)
 
-        # VoiceSelectionParams 설정 (한국어)
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="ko-KR",
-            name="ko-KR-Neural2-A",
-        )
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.LINEAR16,
-            speaking_rate=1.26,  # 음성 속도
-            pitch=-3.20,  # 음높이 
-        )
+        if user_text_language == "ko":  # 한국어인 경우
+            # VoiceSelectionParams 설정 (한국어)
+            voice = texttospeech.VoiceSelectionParams(
+                language_code="ko-KR",
+                name="ko-KR-Neural2-A",
+            )
+            audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.LINEAR16,
+                speaking_rate=1.26,  # 음성 속도
+                pitch=-3.20,  # 음높이 
+            )
+
+        else:  # 영어 목소리 사용
+            voice = texttospeech.VoiceSelectionParams(
+                language_code="en-US",
+                name="en-US-Neural2-E",
+            )
+            audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.LINEAR16,
+                speaking_rate=1.26,  # 음성 속도
+                pitch=1.20,  # 음높이 
+            )
+
+        # audio_config = texttospeech.AudioConfig(
+        #     audio_encoding=texttospeech.AudioEncoding.LINEAR16,
+        #     speaking_rate=1.26,  # 음성 속도
+        #     pitch=-3.20,  # 음높이 
+        # )
 
         # Text-to-Speech API 요청 보내기
         response = client.synthesize_speech(
