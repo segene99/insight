@@ -3,16 +3,27 @@ from google.cloud import texttospeech
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi import HTTPException
-
+from model import TextRequest
 # Google Cloud Text-to-Speech 클라이언트 생성
 client = texttospeech.TextToSpeechClient()
 
 
-def get_audio_from_tts(text: str):
+def get_audio_from_tts(text: TextRequest):
+    
+    user_text = text.user
+    assistant_text = text.assistant
+    print("=========TTS==========",text)
+    print("user_text",user_text)
+    print("assistant_text",assistant_text)
 
+    ssml = f"""
+        <speak>
+            {user_text}<break time="1s"/>{assistant_text}
+        </speak>
+    """
     try:
         # Text-to-Speech API 요청 생성
-        synthesis_input = texttospeech.SynthesisInput(text=text.text)
+        synthesis_input = texttospeech.SynthesisInput(ssml=ssml)
 
         # VoiceSelectionParams 설정 (한국어)
         voice = texttospeech.VoiceSelectionParams(
@@ -21,8 +32,8 @@ def get_audio_from_tts(text: str):
         )
         audio_config = texttospeech.AudioConfig(
             audio_encoding=texttospeech.AudioEncoding.LINEAR16,
-            speaking_rate=1.26,  # 음성 속도 (기본값은 1.0)
-            pitch=-3.20,  # 음높이 (기본값은 0.0)
+            speaking_rate=1.26,  # 음성 속도
+            pitch=-3.20,  # 음높이 
         )
 
         # Text-to-Speech API 요청 보내기

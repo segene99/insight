@@ -107,9 +107,6 @@ async def get_answer_from_gpt(message_list: Messages):
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Google Cloud Text-to-Speech 클라이언트 생성
-client = texttospeech.TextToSpeechClient()
-
 @app.post("/text-to-speech")
 async def text_to_speech(text_request: TextRequest):
 

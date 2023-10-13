@@ -19,4 +19,5 @@ class Messages(BaseModel):
     # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
 
 class TextRequest(BaseModel):
-    text: str
+    user: str
+    assistant : str
