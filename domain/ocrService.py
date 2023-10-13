@@ -34,7 +34,9 @@ def pic_to_text(image_list: ImageList) -> List[str]:
         # For dense text, use document_text_detection
         response = client.document_text_detection(image=image) # pylint: disable=no-member
         text = response.full_text_annotation.text
-
+        # Remove existing newline characters and add a newline at the end
+        text = text.replace('\n', ' ') + '\n'
+        
         texts.append(text)
 
     # Create a directory to store the text file if it doesn't exist

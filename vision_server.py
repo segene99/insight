@@ -95,7 +95,7 @@ async def get_answer_from_gpt(message_list: Messages):
             answer_content = text_received_semantic['answer']
         else:
             print("============keyword search==========")
-            text_received_keyword = search_keyword(user_input, file_path_sum)
+            text_received_keyword = search_keyword(user_input, file_path)
             print("============text_received==========",text_received_keyword)
             answer_content = text_received_keyword
             
