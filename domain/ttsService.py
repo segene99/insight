@@ -17,21 +17,29 @@ def get_audio_from_tts(text: TextRequest):
     print("=========TTS==========",text)
     print("user_text",user_text)
     print("assistant_text",assistant_text)
+    
+   
 
-    ssml = f"""
-        <speak>
-            {user_text}<break time="1s"/>{assistant_text}
-        </speak>
-    """
     try:
-
+        if(user_text == ""):
+            ssml = f"""
+                <speak>
+                    {assistant_text}
+                </speak>
+            """
+        else:
+            ssml = f"""
+                <speak>
+                    {user_text}<break time="1s"/>{assistant_text}
+                </speak>
+            """
         # user_text가 어떤 언어인지 감지
-        user_text_language = detect(user_text)
+        assistant_text_language = detect(assistant_text)
 
         # Text-to-Speech API 요청 생성
         synthesis_input = texttospeech.SynthesisInput(ssml=ssml)
 
-        if user_text_language == "ko":  # 한국어인 경우
+        if assistant_text_language == "ko":  # 한국어인 경우
             # VoiceSelectionParams 설정 (한국어)
             voice = texttospeech.VoiceSelectionParams(
                 language_code="ko-KR",

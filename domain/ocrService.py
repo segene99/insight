@@ -19,7 +19,7 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     # Instantiates a client
     client = gvision.ImageAnnotatorClient()
     texts = []
-
+    
     for idx, image_url_obj in enumerate(image_list.imageUrls):
         # Extract the URL string
         url = image_url_obj.url
