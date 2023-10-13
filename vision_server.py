@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 from domain.gptService import get_summary_from_gpt
 from domain.keywordSearchService import search_keyword
 from domain.ragService import search_documents
+# from domain.ragService2 import search_documents
 from domain.visionService import request_vision_api
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -55,10 +56,9 @@ async def get_text_from_image(image_data: ImageList):
         print("======detected_text======" , detected_text)
 
         # Get summary from GPT
-        print("======gpt summary 시작======")
-        summary = get_summary_from_gpt(detected_text)
-        
-        print("======summary======" , summary)
+        # print("======gpt summary 시작======")
+        # summary = get_summary_from_gpt(detected_text)
+        # print("======summary======" , summary)
 
         # results = [{
             # "summary": summary
@@ -81,7 +81,7 @@ async def get_answer_from_gpt(message_list: Messages):
         print("============base_dir==========",base_dir)
         insight_dir = os.path.dirname(base_dir) # 상위 디렉토리로 이동하여 insight 경로까지 접근
         file_path = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
-        file_path_sum = os.path.join(insight_dir, 'insight/detected_texts', 'summary.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+        file_path_sum = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
         print("============file_path==========",file_path)
         print("============file_path_sum==========",file_path_sum)
 

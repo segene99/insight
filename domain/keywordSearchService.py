@@ -12,7 +12,7 @@ def tokenizer(sent):
 def search_keyword(question, file_path):
     
     with open(file_path, 'r', encoding='utf-8') as file:
-        texts = file.read().split('\n')
+        texts = file.read().split('/n')
 
     tokenized_corpus = [tokenizer(doc) for doc in texts]
 
@@ -27,7 +27,7 @@ def search_keyword(question, file_path):
 
     doc_scores = bm25.get_scores(question) #점수반환
     print("====점수====",doc_scores)
-    answer = bm25.get_top_n(question, texts, n=2) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
+    answer = bm25.get_top_n(question, texts, n=3) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
     answer_str = ' '.join(answer)
 
     return answer_str
