@@ -7,12 +7,8 @@ class ImageURL(BaseModel):
 
 class ImageList(BaseModel):
     imageUrls: List[ImageURL]
-<<<<<<< HEAD
     productTexts : str
-    sietUrls: str
-=======
-    
->>>>>>> segene2
+    siteUrls: str
 
 class Turn(BaseModel):
     role: str

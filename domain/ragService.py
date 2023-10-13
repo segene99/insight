@@ -123,11 +123,7 @@ def search_documents(question, documents_path=file_path):
     # expose this index in a retriever interface
         vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":4})
 
-<<<<<<< HEAD
-#    chathistory memory 
-=======
-   # chathistory memory 
->>>>>>> segene2
+    # chathistory memory 
         memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True

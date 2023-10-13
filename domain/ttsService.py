@@ -18,7 +18,7 @@ def get_audio_from_tts(text: TextRequest):
     print("user_text",user_text)
     print("assistant_text",assistant_text)
     
-   
+
 
     try:
         if(user_text == ""):
