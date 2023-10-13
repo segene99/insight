@@ -17,12 +17,12 @@ def get_audio_from_tts(text: str):
         # VoiceSelectionParams 설정 (한국어)
         voice = texttospeech.VoiceSelectionParams(
             language_code="ko-KR",
-            name="ko-KR-Neural2-B",
+            name="ko-KR-Neural2-A",
         )
         audio_config = texttospeech.AudioConfig(
             audio_encoding=texttospeech.AudioEncoding.LINEAR16,
             speaking_rate=1.26,  # 음성 속도 (기본값은 1.0)
-            pitch=-0.80,  # 음높이 (기본값은 0.0)
+            pitch=-3.20,  # 음높이 (기본값은 0.0)
         )
 
         # Text-to-Speech API 요청 보내기
