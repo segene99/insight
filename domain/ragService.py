@@ -23,10 +23,10 @@ from langchain.chat_models import ChatOpenAI
 from sentence_transformers import SentenceTransformer, util
 
 # Create memory outside the function to preserve chat history
-memory = ConversationBufferMemory(
-    memory_key="chat_history",
-    return_messages=True
-)
+# memory = ConversationBufferMemory(
+#     memory_key="chat_history",
+#     return_messages=True
+# )
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -91,10 +91,10 @@ def search_documents(question, file_path):
         vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
    # chathistory memory 
-        # memory = ConversationBufferMemory(
-        #     memory_key="chat_history",
-        #     return_messages=True
-        # )
+        memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True
+        )
 
     # 대화형 retrieval chain
         qa = ConversationalRetrievalChain.from_llm(
