@@ -1,9 +1,9 @@
 from rank_bm25 import BM25Okapi
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from domain.koNLPyService import get_konlpy_text
 
 from prompt import ask_gpt
-
 
 def tokenizer(sent):
     # print("======타입=====", type(sent))
@@ -15,6 +15,9 @@ def search_keyword(question, file_path):
     
     with open(file_path, 'r', encoding='utf-8') as file:
         texts = file.read().split('/n')
+    #형태소 분석기
+    answer_sorted = get_konlpy_text(texts)
+    answer_sorted_q = get_konlpy_text(question)
 
     tokenized_corpus = [tokenizer(doc) for doc in texts]
 
@@ -29,9 +32,10 @@ def search_keyword(question, file_path):
 
     doc_scores = bm25.get_scores(question) #점수반환
     print("====점수====",doc_scores)
-    answer = bm25.get_top_n(question, texts, n=3) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
+    answer = bm25.get_top_n(question, answer_sorted, n=3) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
     answer_str = ' '.join(answer)
 
-    answer_gpt = ask_gpt(question, answer_str)
+    #gpt 검색
+    # answer_gpt = ask_gpt(question, answer_str)
     
-    return answer_gpt
+    return answer_str
