@@ -173,7 +173,7 @@ def process_document_sample(
     mime_type: str,
     field_mask: Optional[str] = None,
     processor_version_id: Optional[str] = None,
-) -> None:
+) -> str:
     # You must set the `api_endpoint` if you use a location other than "us".
     opts = ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
 
@@ -224,7 +224,7 @@ def process_document_sample(
     print("The document contains the following text:")
     print(document.text)
 
-    textSummary = document.replace('\n', ' ') + '\n'
+    text_Summary = document.text.replace('\n', ' ') + '\n'
 
     # Create a directory to store the text file if it doesn't exist
     os.makedirs('detected_texts', exist_ok=True)
@@ -233,4 +233,6 @@ def process_document_sample(
     file_path = os.path.join('detected_texts', 'pdf_Extracted_Text.txt')
     with open(file_path, 'w', encoding='utf-8') as file:
         # Join all the texts with a space separator and write to the file
-        file.write(" ".join(textSummary))
+        file.write(" ".join(text_Summary))
+
+    return text_Summary

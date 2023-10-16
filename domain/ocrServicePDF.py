@@ -61,49 +61,7 @@ def img_to_pdf(image_list: ImageList, output_filename='combined.pdf', output_fol
     return output_path
 
 
-def pdf_to_text(pdf_path: str, output_folder: str = 'detected_texts'):
-    """
-    Detects text in a PDF file using Google Cloud Vision API.
-    
-    Args:
-    pdf_path: Path to the PDF file.
-    output_folder: Folder to save the extracted text file.
-
-    Returns:
-    List of strings of text detected in the PDF file.
-    """
-    # Ensure the Google Cloud credentials are set correctly in your environment
-    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path_to_your_service_account_file.json"
-
-    # Instantiates a client
-    client = vision.ImageAnnotatorClient()
-
-    # Loads the PDF file into memory
-    with open(pdf_path, 'rb') as pdf_file:
-        content = pdf_file.read()
-    
-    # Convert PDF content to Google Cloud Vision Image type
-    image = vision.Image(content=content)
-    
-    # Request text detection for the PDF
-    response = client.document_text_detection(image=image) # pylint: disable=no-member
-    texts = response.full_text_annotation.text
-    # Remove existing newline characters and add a newline at the end
-    text = texts.replace('\n', ' ') + '\n'
-    
-    print("$$$$$$$$$$$$$" , response)
-
-    # Create directory to store the text file if it doesn't exist
-    os.makedirs(output_folder, exist_ok=True)
-    
-    # Save all the detected text to a single txt file
-    file_path = os.path.join(output_folder, 'extracted_texts.txt')
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write("\n".join(text))
-    
-    return texts
-
-def images_to_text(image_list: ImageList, pdf_filename='combined.pdf', text_filename='extracted_texts.txt', output_folder='detected_texts') -> List[str]:
+def images_to_text(image_list: ImageList, pdf_filename='combined.pdf', output_folder='detected_texts') -> str:
     """
     Converts a list of image URLs to a PDF and then extracts text from the PDF.
 
@@ -122,5 +80,6 @@ def images_to_text(image_list: ImageList, pdf_filename='combined.pdf', text_file
     if pdf_path is None:
         print("Image to PDF conversion failed.")
     
-    process_document_sample(project_id,location,processor_id,file_path,mime_type)
-    
+    extracted_Texts = process_document_sample(project_id,location,processor_id,file_path,mime_type)
+
+    return extracted_Texts
