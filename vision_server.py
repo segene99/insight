@@ -52,6 +52,7 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
+        # print("======pic_to_text 시작======")
         # result = images_to_text(image_data)
         # print("======result======" , result)
 
