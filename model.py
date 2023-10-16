@@ -7,7 +7,8 @@ class ImageURL(BaseModel):
 
 class ImageList(BaseModel):
     imageUrls: List[ImageURL]
-
+    productTexts : str
+    siteUrls: str
 
 class Turn(BaseModel):
     role: str
@@ -18,4 +19,5 @@ class Messages(BaseModel):
     # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
 
 class TextRequest(BaseModel):
-    text: str
+    user: str
+    assistant : str

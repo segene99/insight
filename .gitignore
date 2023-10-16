@@ -1,3 +1,6 @@
-# created by virtualenv automatically
-venv/
+/venv
+__pycache__
+/key/keys.txt 
+/detected_texts
+*.pyc
 __pycache__/
