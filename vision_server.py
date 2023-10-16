@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 # from httpx import Timeout
 from domain.gptService import get_summary_from_gpt
 from domain.keywordSearchService import search_keyword
+from domain.ocrServicePDF import images_to_text
 from domain.ragService import search_documents
 # from domain.ragService2 import search_documents
 from domain.visionService import request_vision_api
@@ -51,9 +52,13 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
-        print("======pic_to_text 시작======")
-        detected_text = pic_to_text(image_data)
-        print("======detected_text======" , detected_text)
+
+        result = images_to_text(image_data)
+        print("======result======" , result)
+
+        # print("======pic_to_text 시작======")
+        # detected_text = pic_to_text(image_data)
+        # print("======detected_text======" , detected_text)
 
         # Get summary from GPT
         # print("======gpt summary 시작======")
