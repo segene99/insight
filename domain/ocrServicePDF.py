@@ -23,8 +23,13 @@ def img_to_pdf(image_list: ImageList, output_filename='combined.pdf', output_fol
     """
     images = []
 
+    # Remove duplicate ImageURL objects based on their URL
+    unique_image_urls = list({img.url: img for img in image_list.imageUrls}.values())
+
+    print(unique_image_urls)
     # Download and open the images
-    for image_url_obj in image_list.imageUrls:
+    # for image_url_obj in image_list.imageUrls:
+    for image_url_obj in unique_image_urls:
         try:
             # Download the image
             response = requests.get(image_url_obj.url)

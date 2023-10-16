@@ -20,20 +20,16 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     for image_url_obj in image_list.imageUrls:
         # Extract the URL string
         url = image_url_obj.url
-        print("=====2=======")
         # Download the image from the URL
         res = requests.get(url)
         image_content = res.content
-        print("=====3=======")
         # Create an Image object with the content
         image = gvision.Image(content=image_content)
-        print("=====4=======")
         # For dense text, use document_text_detection
         response = client.document_text_detection(image=image) # pylint: disable=no-member
         detected_text = response.full_text_annotation.text
         # Remove existing newline characters and add a newline at the end
         text = detected_text.replace('\n', ' ') + '\n'
-        print("=====5=======", text)
         texts.append(text)
 
 

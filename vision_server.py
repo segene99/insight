@@ -52,13 +52,12 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
+        # result = images_to_text(image_data)
+        # print("======result======" , result)
 
-        result = images_to_text(image_data)
-        print("======result======" , result)
-
-        # print("======pic_to_text 시작======")
-        # detected_text = pic_to_text(image_data)
-        # print("======detected_text======" , detected_text)
+        print("======pic_to_text 시작======")
+        detected_text = pic_to_text(image_data)
+        print("======detected_text======" , detected_text)
 
         # Get summary from GPT
         # print("======gpt summary 시작======")
@@ -85,8 +84,8 @@ async def get_answer_from_gpt(message_list: Messages):
         base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
         print("============base_dir==========",base_dir)
         insight_dir = os.path.dirname(base_dir) # 상위 디렉토리로 이동하여 insight 경로까지 접근
-        file_path = os.path.join(insight_dir, 'insight/detected_texts', 'pdf_Extracted_Text.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
-        file_path_sum = os.path.join(insight_dir, 'insight/detected_texts', 'pdf_Extracted_Text.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+        file_path = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
+        file_path_sum = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
         print("============file_path==========",file_path)
         print("============file_path_sum==========",file_path_sum)
 

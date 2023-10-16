@@ -230,7 +230,7 @@ def process_document_sample(
     os.makedirs('detected_texts', exist_ok=True)
     print("============")
     # Save all the detected text to a single txt file
-    file_path = os.path.join('detected_texts', 'pdf_Extracted_Text.txt')
+    file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
     with open(file_path, 'w', encoding='utf-8') as file:
         # Join all the texts with a space separator and write to the file
         file.write(" ".join(text_Summary))
