@@ -121,7 +121,7 @@ def search_documents(question, documents_path=file_path):
         #     return None
 
     # expose this index in a retriever interface
-        vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":4})
+        vector_retriever = vector_db.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
     # chathistory memory 
         memory = ConversationBufferMemory(

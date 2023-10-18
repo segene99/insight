@@ -16,8 +16,16 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     # Instantiates a client
     client = gvision.ImageAnnotatorClient()
     texts = []
-    print("=====1=======")
-    for image_url_obj in image_list.imageUrls:
+
+    # Remove duplicate ImageURL objects based on their URL
+    unique_image_urls = list({img.url: img for img in image_list.imageUrls}.values())
+
+    # Filter out .gif URLs from the unique set
+    filtered_image_urls = [image_url_obj for image_url_obj in unique_image_urls if not image_url_obj.url.endswith('.gif')]
+
+    print("Number of filtered image URLs:", len(filtered_image_urls))
+
+    for image_url_obj in filtered_image_urls:
         # Extract the URL string
         url = image_url_obj.url
         # Download the image from the URL
