@@ -2,6 +2,8 @@ from rank_bm25 import BM25Okapi
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
+from prompt import ask_gpt
+
 
 def tokenizer(sent):
     # print("======타입=====", type(sent))
@@ -30,4 +32,6 @@ def search_keyword(question, file_path):
     answer = bm25.get_top_n(question, texts, n=3) #get_top_n: 점수에 따른 상위 n개의 문서를 바로 리턴
     answer_str = ' '.join(answer)
 
-    return answer_str
+    answer_gpt = ask_gpt(question, answer_str)
+    
+    return answer_gpt
