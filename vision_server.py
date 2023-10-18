@@ -19,7 +19,7 @@ import os
 # from PIL import Image
 from io import BytesIO
 from domain.ocrService import pic_to_text
-from model import ImageList, ImageURL, Messages, Turn, TextRequest
+from model import ImageList, ImageURL, Messages, Turn, TextRequest, AudioConfig
 from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
 import logging
 
@@ -114,10 +114,13 @@ async def get_answer_from_gpt(message_list: Messages):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/text-to-speech")
-async def text_to_speech(text_request: TextRequest):
+async def text_to_speech(text_request: TextRequest, audio_config: AudioConfig):
+    print("########text_request: ", text_request)
+    print("#########audio_config volume: ", type(audio_config.volume) )
+    print("#########audio_config speed : ", type(audio_config.speed) )
 
     try:
-        response = get_audio_from_tts(text_request)
+        response = get_audio_from_tts(text_request, audio_config)
         return response
     
     except Exception as e:

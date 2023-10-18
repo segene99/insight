@@ -21,3 +21,7 @@ class Messages(BaseModel):
 class TextRequest(BaseModel):
     user: str
     assistant : str
+
+class AudioConfig(BaseModel):
+    volume: float
+    speed: float

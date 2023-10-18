@@ -3,14 +3,14 @@ from google.cloud import texttospeech
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi import HTTPException
-from model import TextRequest
+from model import TextRequest, AudioConfig
 from langdetect import detect
 
 # Google Cloud Text-to-Speech 클라이언트 생성
 client = texttospeech.TextToSpeechClient()
 
 
-def get_audio_from_tts(text: TextRequest):
+def get_audio_from_tts(text: TextRequest, audio_config: AudioConfig):
     
     user_text = text.user
     assistant_text = text.assistant
@@ -18,7 +18,16 @@ def get_audio_from_tts(text: TextRequest):
     print("user_text",user_text)
     print("assistant_text",assistant_text)
     
+    print("audio_config : ", audio_config)
+    # 소리 크기
+    volume = 0
+    if(audio_config.volume):
+        volume  = audio_config.volume
 
+    # 소리 속도
+    speed = 1.26
+    if(audio_config.speed):
+        speed  = audio_config.speed
 
     try:
         if(user_text == ""):
@@ -47,8 +56,9 @@ def get_audio_from_tts(text: TextRequest):
             )
             audio_config = texttospeech.AudioConfig(
                 audio_encoding=texttospeech.AudioEncoding.LINEAR16,
-                speaking_rate=1.26,  # 음성 속도
-                pitch=-3.20,  # 음높이 
+                speaking_rate= speed,  # 음성 속도 [0.25, 4.0]/ 1.0은 기본 속도입니다. 설정되지 않은 경우(0.0) 기본 속도는 기본 1.0입니다. 
+                pitch=-3.20,  # 음높이  [-20.0, 20.0] 
+                volume_gain_db= volume # 볼륨  [-96.0, 16.0] +6.0(dB) 값은 일반 기본 신호 진폭의 약 2배. +10(dB)을 초과하지 않는 것이 좋음.
             )
 
         else:  # 영어 목소리 사용
@@ -58,8 +68,9 @@ def get_audio_from_tts(text: TextRequest):
             )
             audio_config = texttospeech.AudioConfig(
                 audio_encoding=texttospeech.AudioEncoding.LINEAR16,
-                speaking_rate=1.26,  # 음성 속도
+                speaking_rate= speed,  # 음성 속도
                 pitch=1.20,  # 음높이 
+                volume_gain_db= volume
             )
 
         # audio_config = texttospeech.AudioConfig(
