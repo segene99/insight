@@ -52,11 +52,11 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
-        # print("======pic_to_text 시작======")
+        # print("======pic_to_text PDF 시작======")
         # result = images_to_text(image_data)
         # print("======result======" , result)
 
-        print("======pic_to_text 시작======")
+        print("======pic_to_text IMG 시작======")
         detected_text = pic_to_text(image_data)
         print("======detected_text======" , detected_text)
 
@@ -81,6 +81,7 @@ async def get_answer_from_gpt(message_list: Messages):
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         print("============user_input==========",user_input)
+        
         # 경로설정
         base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
         print("============base_dir==========",base_dir)
