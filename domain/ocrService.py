@@ -25,7 +25,6 @@ def pic_to_text(image_list: ImageList) -> List[str]:
 
     print("Number of filtered image URLs:", len(filtered_image_urls))
 
-    print("=====1=======")
     for image_url_obj in filtered_image_urls:
         # Extract the URL string
         url = image_url_obj.url

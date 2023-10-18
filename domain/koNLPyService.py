@@ -50,16 +50,16 @@ print("[Hannanum pos 함수]")
 print(hannanum.pos(text))
 '''
 def get_konlpy_text(texts: list[str]) -> list[str]:
-    kkma = Kkma()
+    okt = Okt()
 
     results = []
     for text in texts:
-        morphs_for_text = kkma.morphs(text)
+        morphs_for_text = okt.morphs(text)
         results.append(morphs_for_text)
 
-    # Optionally print results
-    for result in results:
-        print("[Kkma morphs 함수]")
-        print(result)
+    # # Optionally print results
+    # for result in results:
+    #     print("[okt morphs 함수]")
+    #     print(result)
 
     return results
