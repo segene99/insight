@@ -26,6 +26,6 @@ def search_keyword(question, file_path):
     answer_str = ' '.join(answer)
 
     #gpt 검색
-    # answer_gpt = ask_gpt(question, answer_str)
+    answer_gpt = ask_gpt(question, answer_str)
     
-    return answer_str
+    return answer_gpt

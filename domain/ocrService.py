@@ -16,25 +16,26 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     # Instantiates a client
     client = gvision.ImageAnnotatorClient()
     texts = []
-
+    print("=======1======")
     # Remove duplicate ImageURL objects based on their URL
     unique_image_urls = list({img.url: img for img in image_list.imageUrls}.values())
-
+    print("=======2======")
     # Filter out .gif URLs from the unique set
     filtered_image_urls = [image_url_obj for image_url_obj in unique_image_urls if not image_url_obj.url.endswith('.gif')]
-
-    print("Number of filtered image URLs:", len(filtered_image_urls))
+    print("=======3======")
+    # print("Number of filtered image URLs:", len(filtered_image_urls))
 
     for image_url_obj in filtered_image_urls:
+        # Download the image from the URL
         # Extract the URL string
         url = image_url_obj.url
-        # Download the image from the URL
         res = requests.get(url)
         image_content = res.content
         # Create an Image object with the content
         image = gvision.Image(content=image_content)
         # For dense text, use document_text_detection
         response = client.document_text_detection(image=image) # pylint: disable=no-member
+        # print("========ocr response======",response)
         detected_text = response.full_text_annotation.text
         # Remove existing newline characters and add a newline at the end
         text = detected_text.replace('\n', ' ') + '\n'
