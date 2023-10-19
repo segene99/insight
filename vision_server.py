@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 from domain.gptService import get_summary_from_gpt
 from domain.keywordSearchService import search_keyword
 from domain.ocrServicePDF import images_to_text
-from domain.ragService import search_documents
+from domain.ragService3 import search_documents
 # from domain.ragService2 import search_documents
 from domain.visionService import request_vision_api
 from fastapi.responses import HTMLResponse
@@ -97,13 +97,14 @@ async def get_answer_from_gpt(message_list: Messages):
         if ' ' in user_input:
             print("============semantic search==========")
             text_received_semantic = search_documents(user_input, file_path)
+            answer_content = str(text_received_semantic).replace("content=", "")
             print("============text_received==========",text_received_semantic)
-            answer_content = text_received_semantic['answer']
+            # answer_content = text_received_semantic['answer']
         else:
             print("============keyword search==========")
             text_received_keyword = search_keyword(user_input, file_path)
             print("============text_received==========",text_received_keyword)
-            answer_content = text_received_keyword
+            answer_content = text_received_keyword.content
             
         results = { "role": "user", "content": answer_content }
 
