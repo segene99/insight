@@ -40,16 +40,11 @@ def split_text(text, max_length, overlap):
 
     return chunks
 
-
 def is_valid_response(question, ocr_text, response):
-    # 질문의 키워드를 분리
     question_keywords = set(question.split())
-
-    # OCR 텍스트와 응답에 있는 키워드를 분리
     ocr_keywords = set(ocr_text.split())
     response_keywords = set(response.split())
 
-    # 질문의 키워드 중 OCR 텍스트에 없는 것이 응답에 포함되어 있는지 확인
     for keyword in question_keywords:
         if keyword not in ocr_keywords and keyword in response_keywords:
             return False
@@ -61,17 +56,18 @@ def ask_gpt(question, ocr_text):
     responses = []
 
     for chunk in text_chunks:
+        system_message = f"당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오. 다른 외부 정보나 지식은 참조하지 마십시오.영어로 된 모든 질문에도 한글로만 대답해 주세요.\n\n{chunk}"
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
-            temperature=0.0,
+            temperature=0.1,
             messages=[
-                {"role": "system", "content": f"당신은 친절한 쇼핑 도우미입니다. 주어진 OCR 텍스트 안의 정보만을 기반으로 질문에 답하십시오.\n\n{chunk}"},
+                {"role": "system", "content": system_message},
                 {"role": "user", "content": question}
             ]
         )
         
         response_text = response.choices[0].message['content'].strip()
         responses.append(response_text)
-        break  # 첫 번째 청크에 대한 응답만 사용하도록 break 추가
+        break
 
     return responses[0]
