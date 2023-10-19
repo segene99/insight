@@ -3,7 +3,7 @@ from PIL import Image
 from io import BytesIO
 from typing import List, Optional
 from domain.ocrProcessor import process_document_sample
-from model import ImageList, ImageURL
+from models import ImageList, ImageURL
 import os
 from google.cloud import vision
 from ocrModel import project_id,location,processor_id,file_path,mime_type
