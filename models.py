@@ -13,7 +13,6 @@ class Question(Base):
     content = Column(Text, nullable=False)
     create_date = Column(DateTime, nullable=False)
 
-
 class ImageURL(BaseModel):
     url: str
 

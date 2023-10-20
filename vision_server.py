@@ -7,10 +7,8 @@ from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile, File
 # from httpx import Timeout
 from domain.gptService import get_summary_from_gpt
 from domain.keywordSearchService import search_keyword
-from domain.ocrServicePDF import images_to_text
 from domain.ragService3 import search_documents
 # from domain.ragService2 import search_documents
-from domain.visionService import request_vision_api
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import HTTPException
@@ -23,12 +21,10 @@ from domain.ocrService import pic_to_text
 from models import * 
 from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
 import logging
-
 #TTS 임의로 세팅
 from google.cloud import texttospeech
 from fastapi.responses import JSONResponse
 from domain.ttsService import get_audio_from_tts, delete_audio_files
-
 from pydantic import BaseModel
 from typing import Annotated
 from database import engine, SessionLocal
@@ -68,10 +64,6 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
-        # print("======pic_to_text PDF 시작======")
-        # result = images_to_text(image_data)
-        # print("======result======" , result)
-
         print("======pic_to_text IMG 시작======")
         detected_text = pic_to_text(image_data)
         print("======detected_text======" , detected_text)
@@ -100,22 +92,17 @@ async def get_answer_from_gpt(message_list: Messages):
         
         # 경로설정
         base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
-        print("============base_dir==========",base_dir)
         insight_dir = os.path.dirname(base_dir) # 상위 디렉토리로 이동하여 insight 경로까지 접근
         file_path = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
-        file_path_sum = os.path.join(insight_dir, 'insight/detected_texts', 'all_detected_texts.txt')  # 상위 디렉토리의 bbb/aaa.txt 파일로의 경로
         print("============file_path==========",file_path)
-        print("============file_path_sum==========",file_path_sum)
 
         # Search through saved text documents
         # Extracting 'answer' content
-
         if ' ' in user_input:
             print("============semantic search==========")
             text_received_semantic = search_documents(user_input, file_path)
             answer_content = str(text_received_semantic).replace("content=", "")
             print("============text_received==========",text_received_semantic)
-            # answer_content = text_received_semantic['answer']
         else:
             print("============keyword search==========")
             text_received_keyword = search_keyword(user_input, file_path)
@@ -139,35 +126,6 @@ async def text_to_speech(text_request: TextRequest):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-#     # Instantiates a client
-# client = texttospeech.TextToSpeechClient()
-
-# # Set the text input to be synthesized
-# synthesis_input = texttospeech.SynthesisInput(text="Hello, World!")
-
-# # Build the voice request, select the language code ("en-US") and the ssml
-# # voice gender ("neutral")
-# voice = texttospeech.VoiceSelectionParams(
-#     language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
-# )
-
-# # Select the type of audio file you want returned
-# audio_config = texttospeech.AudioConfig(
-#     audio_encoding=texttospeech.AudioEncoding.MP3
-# )
-
-# # Perform the text-to-speech request on the text input with the selected
-# # voice parameters and audio file type
-# response = client.synthesize_speech(
-#     input=synthesis_input, voice=voice, audio_config=audio_config
-# )
-
-# # The response's audio_content is binary.
-# with open("output.mp3", "wb") as out:
-#     # Write the response to the output file.
-#     out.write(response.audio_content)
-#     print('Audio content written to file "output.mp3"')
 
 def get_db():
     db = SessionLocal()
