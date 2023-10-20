@@ -27,8 +27,14 @@ class Turn(BaseModel):
 
 class Messages(BaseModel):
     messages: List[Turn]  
+    siteUrls: str
     # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
 
 class TextRequest(BaseModel):
     user: str
     assistant : str
+
+class Document:
+    def __init__(self, page_content: str, metadata: dict = None):
+        self.page_content = page_content
+        self.metadata = metadata or {}

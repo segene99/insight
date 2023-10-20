@@ -1,13 +1,16 @@
 from rank_bm25 import BM25Okapi
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from crud import fetch_content_from_db
 from domain.koNLPyService import get_konlpy_text
 from prompt import ask_gpt
 
-def search_keyword(question, file_path):
+def search_keyword(question, siteURL: str):
     
-    with open(file_path, 'r', encoding='utf-8') as file:
-        texts = file.read().split('\n')
+    # with open(file_path, 'r', encoding='utf-8') as file:
+    #     texts = file.read().split('\n')
+    texts = fetch_content_from_db(siteURL)
+    
     #형태소 분석기
     answer_sorted = get_konlpy_text(texts)
     answer_sorted_q = get_konlpy_text(question)

@@ -29,6 +29,7 @@ from langchain.prompts import PromptTemplate
 from langchain import hub
 from langchain.schema.runnable import RunnablePassthrough
 
+from crud import fetch_content_from_db
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -56,11 +57,12 @@ file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
 def tokenizer(sent):
     return sent.split(" ")
 
-def search_documents(question, documents_path=file_path):    
+def search_documents(question, siteURL= str):    
     try: 
-    # Load the documents and split them into chunks
-        loader = TextLoader(documents_path)
-        documents = loader.load()
+    # Load the documents
+        # loader = TextLoader(documents_db)
+        # documents = loader.load()
+        documents = fetch_content_from_db(siteURL) 
 
     # Split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
@@ -94,8 +96,8 @@ def search_documents(question, documents_path=file_path):
         result = rag_chain.invoke(question)
 
         return result
-        #반환데이터 형태
-        # AIMessage(content='something something')
+    #반환데이터 형태
+    # AIMessage(content='something something')
 
     except IndexError as ie:
         print("IndexError occurred:", str(ie))
