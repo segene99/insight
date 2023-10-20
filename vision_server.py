@@ -67,6 +67,7 @@ async def get_text_from_image(image_data: ImageList):
     try:
         ocr_text = check_ocr(image_data.siteUrls)
         if(ocr_text):
+            print("=====ocr complete=====")
             return "ocr 완료"
         else:
             print("======pic_to_text IMG 시작======")

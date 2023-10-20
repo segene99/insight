@@ -48,7 +48,7 @@ def pic_to_text(image_list: ImageList) -> List[str]:
 
     #OCR data insertion into DB
     insert_ocr(texts, image_list)
-
+    print(texts)
     # print("=====6=======")
     # # Create a directory to store the text file if it doesn't exist
     # os.makedirs('detected_texts', exist_ok=True)

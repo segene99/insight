@@ -21,7 +21,7 @@ def check_ocr(siteURL: str) -> bool:
     try:
         # Query the database to check if siteURL exists in the 'subject' column
         exists = session.query(Question).filter(Question.subject == siteURL).first() is not None
-
+        print("=====check db=====")
     except:
         session.rollback()
         raise
