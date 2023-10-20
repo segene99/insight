@@ -34,6 +34,10 @@ class TextRequest(BaseModel):
     user: str
     assistant : str
 
+class AudioConfig(BaseModel):
+    volume: float
+    speed: float
+
 class Document:
     def __init__(self, page_content: str, metadata: dict = None):
         self.page_content = page_content
