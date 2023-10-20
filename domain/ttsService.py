@@ -2,7 +2,7 @@ import os
 from google.cloud import texttospeech
 from fastapi.responses import FileResponse
 from fastapi import HTTPException
-from model import TextRequest, AudioConfig
+from models import TextRequest, AudioConfig
 from langdetect import detect
 
 # Google Cloud Text-to-Speech 클라이언트 생성
