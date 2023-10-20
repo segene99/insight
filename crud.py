@@ -1,7 +1,7 @@
 
 import datetime
 from database import SessionLocal
-from models import Document, ImageList, Question
+from models import ImageList, Question
 from sqlalchemy.orm import Session
 
 def fetch_content_from_db(siteurl: str) -> str:
@@ -10,12 +10,7 @@ def fetch_content_from_db(siteurl: str) -> str:
     try:
         # Get the content where the subject matches the given siteurl
         content = session.query(Question.content).filter(Question.subject == siteurl).first()
-        # return content[0] if content else None
-        # If content is found, wrap it in a Document object and return as a list
-        if content:
-            return [Document(page_content=content[0])]
-        else:
-            return []
+        return content[0] if content else None
     finally:
         session.close()
 

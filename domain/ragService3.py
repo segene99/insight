@@ -30,6 +30,7 @@ from langchain import hub
 from langchain.schema.runnable import RunnablePassthrough
 
 from crud import fetch_content_from_db
+from models import Document
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -62,8 +63,8 @@ def search_documents(question, siteURL= str):
     # Load the documents
         # loader = TextLoader(documents_db)
         # documents = loader.load()
-        documents = fetch_content_from_db(siteURL) 
-
+        context = fetch_content_from_db(siteURL) 
+        documents = [Document(page_content=context)]
     # Split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
         splits = text_splitter.split_documents(documents)

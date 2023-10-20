@@ -106,7 +106,7 @@ async def get_answer_from_gpt(message_list: Messages):
             print("============keyword search==========")
             text_received_keyword = search_keyword(user_input, message_list.siteUrls)
             print("============text_received==========",text_received_keyword)
-            answer_content = text_received_keyword.content
+            answer_content = text_received_keyword
             
         results = { "role": "user", "content": answer_content }
 
