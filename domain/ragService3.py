@@ -94,8 +94,8 @@ def search_documents(question, documents_path=file_path):
         result = rag_chain.invoke(question)
 
         return result
-    #반환데이터 형태
-    # AIMessage(content='something something')
+        #반환데이터 형태
+        # AIMessage(content='something something')
 
     except IndexError as ie:
         print("IndexError occurred:", str(ie))

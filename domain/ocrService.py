@@ -2,7 +2,17 @@ import os
 import requests
 from google.cloud import vision as gvision
 from typing import List
+from database import SessionLocal
 from models import ImageList, ImageURL
+from sqlalchemy.orm import Session
+import datetime
+from models import Question
+
+def insert_text_to_db(session: Session, url: str, detected_text: str):
+    """Inserts detected text from an image URL into the database."""
+    question = Question(subject=url, content=detected_text, create_date=datetime.datetime.now())
+    session.add(question)
+    session.commit()
 
 def pic_to_text(image_list: ImageList) -> List[str]:
     """Detects text in images from URLs
@@ -41,15 +51,26 @@ def pic_to_text(image_list: ImageList) -> List[str]:
         text = detected_text.replace('\n', ' ') + '\n'
         texts.append(text)
 
-
-    print("=====6=======")
-    # Create a directory to store the text file if it doesn't exist
-    os.makedirs('detected_texts', exist_ok=True)
-    print("=====7=======")
-    # Save all the detected text to a single txt file
-    file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
-    with open(file_path, 'w', encoding='utf-8') as file:
-        # Join all the texts with a space separator and write to the file
-        file.write(" ".join(texts))
-
+        # Insert detected text into the database
+        # Start a new session for the database operation
+        session = SessionLocal()
+        try:
+            insert_text_to_db(session, url=url, detected_text=text)
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+    
+    # print("=====6=======")
+    # # Create a directory to store the text file if it doesn't exist
+    # os.makedirs('detected_texts', exist_ok=True)
+    # print("=====7=======")
+    # # Save all the detected text to a single txt file
+    # file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
+    # with open(file_path, 'w', encoding='utf-8') as file:
+    #     # Join all the texts with a space separator and write to the file
+    #     file.write(" ".join(texts))
+    
     return texts
