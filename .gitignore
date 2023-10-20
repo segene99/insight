@@ -4,3 +4,5 @@ __pycache__
 /detected_texts
 *.pyc
 __pycache__/
+tmp_audio_file.wav
+/tts_audio/output.wav
