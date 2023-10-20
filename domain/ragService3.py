@@ -29,6 +29,8 @@ from langchain.prompts import PromptTemplate
 from langchain import hub
 from langchain.schema.runnable import RunnablePassthrough
 
+from crud import fetch_content_from_db
+from models import Document
 
 # 키받는곳: https://platform.openai.com/account/
 # keys.txt 파일에서 API 키들을 읽어오는 함수
@@ -56,12 +58,13 @@ file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
 def tokenizer(sent):
     return sent.split(" ")
 
-def search_documents(question, documents_path=file_path):    
+def search_documents(question, siteURL= str):    
     try: 
-    # Load the documents and split them into chunks
-        loader = TextLoader(documents_path)
-        documents = loader.load()
-
+    # Load the documents
+        # loader = TextLoader(documents_db)
+        # documents = loader.load()
+        context = fetch_content_from_db(siteURL) 
+        documents = [Document(page_content=context)]
     # Split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
         splits = text_splitter.split_documents(documents)
@@ -77,7 +80,7 @@ def search_documents(question, documents_path=file_path):
     # Prompt 
         template = """
             당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오.
-            다른 외부 정보나 지식은 참조하지 마십시오.영어로 된 모든 질문에도 한글로만 대답해 주세요.  
+            다른 외부 정보나 지식은 참조하지 마십시오. 영어로 된 모든 질문에도 한글로만 대답해 주세요.  
             만약 질문의 답을 모른다면 지어내서 말하지마십시오.
             {context}
             Question: {question}

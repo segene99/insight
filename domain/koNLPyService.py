@@ -53,9 +53,8 @@ def get_konlpy_text(texts: list[str]) -> list[str]:
     okt = Okt()
 
     results = []
-    for text in texts:
-        morphs_for_text = okt.morphs(text)
-        results.append(morphs_for_text)
+    morphs_for_text = okt.morphs(texts)
+    results.append(morphs_for_text)
 
     # # Optionally print results
     # for result in results:

@@ -2,7 +2,12 @@ import os
 import requests
 from google.cloud import vision as gvision
 from typing import List
-from model import ImageList, ImageURL
+from crud import insert_ocr
+from database import SessionLocal
+from models import ImageList, ImageURL
+from models import Question
+
+
 
 def pic_to_text(image_list: ImageList) -> List[str]:
     """Detects text in images from URLs
@@ -41,15 +46,17 @@ def pic_to_text(image_list: ImageList) -> List[str]:
         text = detected_text.replace('\n', ' ') + '\n'
         texts.append(text)
 
-
-    print("=====6=======")
-    # Create a directory to store the text file if it doesn't exist
-    os.makedirs('detected_texts', exist_ok=True)
-    print("=====7=======")
-    # Save all the detected text to a single txt file
-    file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
-    with open(file_path, 'w', encoding='utf-8') as file:
-        # Join all the texts with a space separator and write to the file
-        file.write(" ".join(texts))
-
+    #OCR data insertion into DB
+    insert_ocr(texts, image_list)
+    print(texts)
+    # print("=====6=======")
+    # # Create a directory to store the text file if it doesn't exist
+    # os.makedirs('detected_texts', exist_ok=True)
+    # print("=====7=======")
+    # # Save all the detected text to a single txt file
+    # file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
+    # with open(file_path, 'w', encoding='utf-8') as file:
+    #     # Join all the texts with a space separator and write to the file
+    #     file.write(" ".join(texts))
+    
     return texts
