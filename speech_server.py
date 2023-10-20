@@ -9,7 +9,7 @@ import openai
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from model import ImageURL, Turn, Messages
+from models import ImageURL, Turn, Messages
 from prompt import ask_gpt
 
 router = APIRouter()
