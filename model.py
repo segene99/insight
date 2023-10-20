@@ -17,7 +17,8 @@ class Turn(BaseModel):
 class Messages(BaseModel):
     messages: List[Turn]  
     # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
-
+    siteUrls: str
+    
 class TextRequest(BaseModel):
     user: str
     assistant : str

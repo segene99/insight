@@ -81,6 +81,7 @@ async def get_answer_from_gpt(message_list: Messages):
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         print("============user_input==========",user_input)
+        print("============siteUrls==========",message_list.siteUrls)
         
         # 경로설정
         base_dir = os.path.dirname(os.path.abspath(__file__))  # 현재 파일(main.py)의 절대 경로
@@ -115,10 +116,6 @@ async def get_answer_from_gpt(message_list: Messages):
 
 @app.post("/text-to-speech")
 async def text_to_speech(text_request: TextRequest, audio_config: AudioConfig):
-    print("########text_request: ", text_request)
-    print("#########audio_config volume: ", type(audio_config.volume) )
-    print("#########audio_config speed : ", type(audio_config.speed) )
-
     try:
         response = get_audio_from_tts(text_request, audio_config)
         return response

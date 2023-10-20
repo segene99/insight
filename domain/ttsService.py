@@ -1,6 +1,5 @@
 import os
 from google.cloud import texttospeech
-from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi import HTTPException
 from model import TextRequest, AudioConfig
@@ -8,7 +7,6 @@ from langdetect import detect
 
 # Google Cloud Text-to-Speech 클라이언트 생성
 client = texttospeech.TextToSpeechClient()
-
 
 def get_audio_from_tts(text: TextRequest, audio_config: AudioConfig):
     
