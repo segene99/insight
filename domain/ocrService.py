@@ -29,7 +29,7 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     filtered_image_urls = [image_url_obj for image_url_obj in unique_image_urls if not image_url_obj.url.endswith('.gif')]
     print("=======3======")
     # print("Number of filtered image URLs:", len(filtered_image_urls))
-
+    
     for image_url_obj in filtered_image_urls:
         # Download the image from the URL
         # Extract the URL string
@@ -45,7 +45,8 @@ def pic_to_text(image_list: ImageList) -> List[str]:
         # Remove existing newline characters and add a newline at the end
         text = detected_text.replace('\n', ' ') + '\n'
         texts.append(text)
-
+        
+    print(texts)
     #OCR data insertion into DB
     insert_ocr(texts, image_list)
     print(texts)

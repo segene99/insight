@@ -34,11 +34,17 @@ def insert_ocr(texts: list, image_list: ImageList):
     # Insert detected text into the database
     # Start a new session for the database operation
     session = SessionLocal()
+    print("<<<<<<<1>>>>>>>>>")
+
     detected_texts_str = " ".join(texts)
+
     try:
+        print("<<<<<<<2>>>>>>>>>")
         insert_text_to_db(session, url=image_list.siteUrls, detected_text=detected_texts_str)
+        print("<<<<<<<3>>>>>>>>>")
         session.commit()
     except:
+        print("<<<<<<<rollback>>>>>>>>>")
         session.rollback()
         raise
     finally:
@@ -46,6 +52,9 @@ def insert_ocr(texts: list, image_list: ImageList):
 
 def insert_text_to_db(session: Session, url: str, detected_text: str):
     """Inserts detected text from an image URL into the database."""
+    print("<<<<<<<4>>>>>>>>>")
     question = Question(subject=url, content=detected_text, create_date=datetime.datetime.now())
+    print("<<<<<<<5>>>>>>>>>")
     session.add(question)
+    print("<<<<<<<6>>>>>>>>>")
     session.commit()
