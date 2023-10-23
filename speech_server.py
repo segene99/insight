@@ -1,5 +1,6 @@
 
 import os
+from pathlib import Path
 from typing import List
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
@@ -97,13 +98,16 @@ async def post_chat(messages: Messages):
 @router.post("/transcribe")
 async def transcribe_audio(audio_file: UploadFile = File(...)):
     try:
+        # Ensure 'tts_audio' folder exists
+        Path("tts_audio").mkdir(parents=True, exist_ok=True)
+        file_path = "tts_audio/tmp_audio_file.wav"
         # 임시 파일 이름 설정
         file_name = "tmp_audio_file.wav"
         #받은 오디오 파일을 바이너리 모드로 열고 임시 파일에 저장
-        with open(file_name, "wb") as f:
+        with open(file_path, "wb") as f:
             f.write(audio_file.file.read())
         #임시 파일을 바이너리 모드로 열고 OpenAI의 음성인식 API를 사용하여 텍스트로 변환
-        with open(file_name, "rb") as f:
+        with open(file_path, "rb") as f:
             transcription = openai.Audio.transcribe("whisper-1", f)
         # 음성 인식 결과에서 텍스트 추출
         text = transcription['text']
