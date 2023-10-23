@@ -31,6 +31,7 @@ from database import engine, SessionLocal
 from crud import check_ocr
 from sqlalchemy.orm import Session
 import models
+import time
 
 # fastapi로 객체 생성
 app = FastAPI()
@@ -65,6 +66,7 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
+        start_time = time.time()
         ocr_text = check_ocr(image_data.siteUrls)
         if(ocr_text):
             print("=====ocr complete=====")
@@ -83,7 +85,9 @@ async def get_text_from_image(image_data: ImageList):
                 # "summary": summary
                 # "original_response": detected_text,
             # }]
-        
+        end_time = time.time()
+        print(f"======Time taken(pic_to_text): {end_time - start_time} seconds=======")
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return "ocr 완료"
@@ -92,6 +96,7 @@ async def get_text_from_image(image_data: ImageList):
 @app.post("/answer")
 async def get_answer_from_gpt(message_list: Messages):
     try:
+        start_time = time.time()
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         print("============user_input==========",user_input)
@@ -111,6 +116,8 @@ async def get_answer_from_gpt(message_list: Messages):
             
         results = { "role": "user", "content": answer_content }
 
+        end_time = time.time()
+        print(f"======Time taken(answer): {end_time - start_time} seconds=======")
         return results
     
     except Exception as e:
