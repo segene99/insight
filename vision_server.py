@@ -103,7 +103,6 @@ async def get_answer_from_gpt(message_list: Messages):
         
         # Search through saved text documents
         # Extracting 'answer' content
-
         search_type = choose_search_type(user_input)
         print("***search_type***", search_type)
         if 'semantic' in search_type:
