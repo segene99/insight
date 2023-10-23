@@ -3,7 +3,7 @@ from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from crud import fetch_content_from_db
 from domain.koNLPyService import get_konlpy_text
-from prompt import ask_gpt
+from domain.prompt import ask_gpt
 
 def search_keyword(question, siteURL: str):
     
