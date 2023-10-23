@@ -1,6 +1,7 @@
 /venv
 __pycache__
 /key/keys.txt 
+/key/db.txt 
 /detected_texts
 *.pyc
 __pycache__/
