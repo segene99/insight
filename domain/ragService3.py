@@ -79,9 +79,12 @@ def search_documents(question, siteURL= str):
     
     # Prompt 
         template = """
-            당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오.
-            다른 외부 정보나 지식은 참조하지 마십시오. 영어로 된 모든 질문에도 한글로만 대답해 주세요.  
-            만약 질문의 답을 모른다면 지어내서 말하지마십시오.
+              "You are a kind shopping agent.\n"
+              "Be sure to answer the questions in Korean and honorifics based only on the information in the given text. "
+              "Don't answer questions you don't know."
+              "Do not refer to any other external information or knowledge. Please answer all questions in English in Korean.. "
+              "질문내용에서 '이게'는 '이거'의 의미로 사용됩니다. '이게'를 '이거'로 해석하고 답변해주세요(단 '이 게'일때는 적용하지 마시오). "
+              "중복되는 정보가 있으면 모두 알려주세요 ..
             {context}
             Question: {question}
             Helpful Answer:
