@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from models import ImageURL, Turn, Messages
-from prompt import ask_gpt
+from domain.prompt import ask_gpt
 
 router = APIRouter()
 # router.mount("/static", StaticFiles(directory="static"), name="static")
