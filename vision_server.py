@@ -5,7 +5,7 @@ from typing import List
 # from bs4 import BeautifulSoup
 from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile, File
 # from httpx import Timeout
-from domain.gptService import get_summary_from_gpt
+from domain.gptService import choose_search_type, get_summary_from_gpt
 from domain.keywordSearchService import search_keyword
 from domain.ragService3 import search_documents
 # from domain.ragService2 import search_documents
@@ -31,6 +31,7 @@ from database import engine, SessionLocal
 from crud import check_ocr
 from sqlalchemy.orm import Session
 import models
+import time
 
 # fastapi로 객체 생성
 app = FastAPI()
@@ -65,6 +66,7 @@ async def read_root(request: Request):
 @app.post("/pic_to_text")
 async def get_text_from_image(image_data: ImageList):
     try:
+        start_time = time.time()
         ocr_text = check_ocr(image_data.siteUrls)
         if(ocr_text):
             print("=====ocr complete=====")
@@ -83,7 +85,9 @@ async def get_text_from_image(image_data: ImageList):
                 # "summary": summary
                 # "original_response": detected_text,
             # }]
-        
+        end_time = time.time()
+        print(f"======Time taken(pic_to_text): {end_time - start_time} seconds=======")
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return "ocr 완료"
@@ -92,18 +96,23 @@ async def get_text_from_image(image_data: ImageList):
 @app.post("/answer")
 async def get_answer_from_gpt(message_list: Messages):
     try:
+        start_time = time.time()
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         print("============user_input==========",user_input)
         
         # Search through saved text documents
         # Extracting 'answer' content
-        if ' ' in user_input:
+
+        search_type = choose_search_type(user_input)
+        print("***search_type***", search_type)
+        if 'semantic' in search_type:
             print("============semantic search==========")
             text_received_semantic = search_documents(user_input, message_list.siteUrls)
             answer_content = str(text_received_semantic).replace("content=", "")
             print("============text_received==========",text_received_semantic)
-        else:
+
+        if 'keyword' in search_type:
             print("============keyword search==========")
             text_received_keyword = search_keyword(user_input, message_list.siteUrls)
             print("============text_received==========",text_received_keyword)
@@ -111,6 +120,8 @@ async def get_answer_from_gpt(message_list: Messages):
             
         results = { "role": "user", "content": answer_content }
 
+        end_time = time.time()
+        print(f"======Time taken(answer): {end_time - start_time} seconds=======")
         return results
     
     except Exception as e:

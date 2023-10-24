@@ -4,7 +4,9 @@ from langchain.memory import ConversationBufferMemory
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.mysql import LONGTEXT
+
 class Question(Base):
     __tablename__ = "question"
 

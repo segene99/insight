@@ -35,10 +35,12 @@ def insert_ocr(texts: list, image_list: ImageList):
     # Start a new session for the database operation
     session = SessionLocal()
     detected_texts_str = " ".join(texts)
+
     try:
         insert_text_to_db(session, url=image_list.siteUrls, detected_text=detected_texts_str)
         session.commit()
     except:
+        print("<<<<<<<rollback>>>>>>>>>")
         session.rollback()
         raise
     finally:
