@@ -68,35 +68,35 @@ def search_documents(question, siteURL= str):
     # Split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
         splits = text_splitter.split_documents(documents)
-
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
         vectorstore = Chroma.from_documents(documents=splits,embedding=embedding_function)
-        retriever = vectorstore.as_retriever()
-
+        # retriever = vectorstore.as_retriever()
+        result = vectorstore.similarity_search(question, k=1)
+        # print("-----------------")
     # LLM
-        llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0.1)
-    
+        # llm = ChatOpenAI(model_name="gpt-4", temperature=0.1)
     # Prompt 
-        template = """
-            당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오.
-            다른 외부 정보나 지식은 참조하지 마십시오. 영어로 된 모든 질문에도 한글로만 대답해 주세요.  
-            만약 질문의 답을 모른다면 지어내서 말하지마십시오.
-            {context}
-            Question: {question}
-            Helpful Answer:
-        """
-        rag_prompt_custom = PromptTemplate.from_template(template)
+        # template = """
+        #     당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오.
+        #     다른 외부 정보나 지식은 참조하지 마십시오. 영어로 된 모든 질문에도 한글로만 대답해 주세요.  
+        #     만약 질문의 답을 모른다면 지어내서 말하지마십시오.
+        #     {context}
+        #     Question: {question}
+        #     Helpful Answer:
+        # """
+        # rag_prompt_custom = PromptTemplate.from_template(template)
 
-        rag_chain = (
-            {"context": retriever, "question": RunnablePassthrough()} 
-            | rag_prompt_custom 
-            | llm 
-        )
+        # rag_chain = (
+        #     {"context": retriever, "question": RunnablePassthrough()} 
+        #     | rag_prompt_custom 
+        #     | llm 
+        # )
 
-        result = rag_chain.invoke(question)
+        # result = rag_chain.invoke(question)
 
         return result
+    
     #반환데이터 형태
     # AIMessage(content='something something')
 

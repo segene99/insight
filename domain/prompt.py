@@ -58,7 +58,7 @@ def ask_gpt(question, ocr_text):
     for chunk in text_chunks:
         system_message = f"당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오. 다른 외부 정보나 지식은 참조하지 마십시오.영어로 된 모든 질문에도 한글로만 대답해 주세요.\n\n{chunk}"
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model="gpt-4",
             temperature=0.1,
             messages=[
                 {"role": "system", "content": system_message},
