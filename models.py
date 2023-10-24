@@ -4,13 +4,13 @@ from langchain.memory import ConversationBufferMemory
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
-
+from sqlalchemy.dialects.mysql import LONGTEXT
 class Question(Base):
     __tablename__ = "question"
 
     id = Column(Integer, primary_key=True)
-    subject = Column(String(255), nullable=False)
-    content = Column(Text, nullable=False)
+    subject = Column(LONGTEXT, nullable=False)
+    content = Column(LONGTEXT, nullable=False)
     create_date = Column(DateTime, nullable=False)
 
 class ImageURL(BaseModel):
