@@ -55,7 +55,7 @@ def get_audio_from_tts(text: TextRequest, audio_config: AudioConfig):
         #     """
 
         # user_text가 어떤 언어인지 감지
-        assistant_text_language = detect(assistant_text)
+        assistant_text_language = detect(user_text)
 
         # audio_option = set_audio_options(assistant_text_language, speed, volume)
         # Text-to-Speech API 요청 생성
