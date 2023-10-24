@@ -56,7 +56,17 @@ def ask_gpt(question, ocr_text):
     responses = []
 
     for chunk in text_chunks:
-        system_message = f"당신은 친절한 쇼핑 도우미입니다. 주어진 텍스트 안의 정보만을 기반으로 질문에 반드시 한글로 답하십시오. 다른 외부 정보나 지식은 참조하지 마십시오.영어로 된 모든 질문에도 한글로만 대답해 주세요.\n\n{chunk}"
+        system_message = (
+    "You are a kind shopping helper.\n"
+    "Be sure to answer the questions in Korean and honorifics based only on the information in the given text. "
+    "Do not refer to any other external information or knowledge. Please answer all questions in English in Korean."
+    "Please respond as politely and kindly as possible to the user"
+    "전달받은 내용과 사용자의 질문에 대해 관련성이 높은 동의어나 대체어를 판별하고 올바른 답변을 해주세요."
+    "여러 제품이 있을 경우 공통된 질문을 한다면 모든 제품의 정보를 모두 답변해주세요"
+    "질문내용에서 '이게'는 '이거'의 의미로 사용됩니다. '이게'를 '이거'로 해석하고 답변해주세요(단 '이 게'일때는 적용하지 마시오)."
+    "중복되는 정보가 있으면 모두 답변해주세요 .\n\n" + chunk
+)
+
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
             temperature=0.1,
