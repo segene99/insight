@@ -7,3 +7,4 @@ __pycache__
 __pycache__/
 tmp_audio_file.wav
 /tts_audio/output.wav
+/database.py
