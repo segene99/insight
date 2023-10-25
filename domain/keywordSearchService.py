@@ -4,19 +4,23 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from crud import fetch_content_from_db
 from domain.koNLPyService import get_konlpy_text
 from domain.prompt import ask_gpt
+import re
 
 def search_keyword(question, siteURL: str):
     
     # with open(file_path, 'r', encoding='utf-8') as file:
     #     texts = file.read().split('\n')
     texts = fetch_content_from_db(siteURL)
-    print("======", texts)
+    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', ' '.join(texts))
+
     #형태소 분석기
-    answer_sorted = get_konlpy_text(texts)
+    # answer_sorted = get_konlpy_text(texts)
+    # answer_sorted_q = get_konlpy_text(question)
+    answer_sorted = get_konlpy_text(sentences)
     answer_sorted_q = get_konlpy_text(question)
     
-    print("====answer_sorted=====", answer_sorted)
-    print("====answer_sorted_q=====", answer_sorted_q)
+    # print("====answer_sorted=====", answer_sorted)
+    # print("====answer_sorted_q=====", answer_sorted_q)
 
     bm25 = BM25Okapi(answer_sorted) # bm25 인스턴스
 
@@ -25,10 +29,10 @@ def search_keyword(question, siteURL: str):
     # print("====inverse term 빈도수====",bm25.idf) # idf: 토큰의 inverse term frequency를 계산해둠
     doc_scores = bm25.get_scores(answer_sorted_q[0]) #점수반환
     print("====점수====",doc_scores)
-    answer_3 = bm25.get_top_n(answer_sorted_q[0], answer_sorted, n=3)
-
+    answer_3 = bm25.get_top_n(answer_sorted_q[0], answer_sorted, n=10)
     #gpt 검색
-    answer_str = ' '.join([' '.join(sublist) for sublist in answer_3])
-    answer_gpt = ask_gpt(question, answer_str)
+    # answer_str = ' '.join([' '.join(sublist) for sublist in answer_3])
+    answer_str = [' '.join(sublist) for sublist in answer_3]
+    # answer_gpt = ask_gpt(question, answer_str)
     
-    return answer_gpt
+    return answer_str

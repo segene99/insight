@@ -53,7 +53,7 @@ def choose_search_type(question: str):
     system_message = '''
                         To answer the following question correctly, 
                         tell me whether keyword search is appropriate or semantic search is appropriate. 
-                        The answer should be either 'keyword' or 'semantic'                        
+                        Your answer must be either 'keyword' or 'semantic'.                      
     '''
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-16k",
@@ -61,7 +61,7 @@ def choose_search_type(question: str):
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": question}
         ],
-        temperature=0.1,
+        temperature=0.0,
         max_tokens=300,
         top_p=1,
         frequency_penalty=0,
