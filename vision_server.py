@@ -8,6 +8,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile, File
 from domain.gptService import choose_search_type, get_summary_from_gpt
 from domain.hybridSearchService import combined_search
 from domain.keywordSearchService import search_keyword
+from domain.prompt import ask_gpt
 from domain.ragService3 import search_documents
 # from domain.ragService2 import search_documents
 from fastapi.responses import HTMLResponse
@@ -118,8 +119,11 @@ async def get_answer_from_gpt(message_list: Messages):
         #     print("============text_received==========",text_received_keyword)
         #     answer_content = text_received_keyword
         answer_content = combined_search(user_input, message_list.siteUrls)
-
-        results = { "role": "user", "content": answer_content }
+        print("============answer_content==========",answer_content)
+        answer_gpt = ask_gpt(user_input, answer_content)
+        
+        # results = { "role": "user", "content": answer_content }
+        results = { "role": "user", "content": answer_gpt }
 
         end_time = time.time()
         print(f"======Time taken(answer): {end_time - start_time} seconds=======")

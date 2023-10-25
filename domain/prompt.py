@@ -52,6 +52,7 @@ def is_valid_response(question, ocr_text, response):
     return True
 
 def ask_gpt(question, ocr_text):
+    ocr_text = ' '.join(ocr_text)
     text_chunks = split_text(ocr_text, MAX_TOKENS - 300, OVERLAP_TOKENS)
     responses = []
 

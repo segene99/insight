@@ -49,6 +49,7 @@ print(komoran.pos(text))
 print("[Hannanum pos 함수]")
 print(hannanum.pos(text))
 '''
+'''
 def get_konlpy_text(texts: list[str]) -> list[str]:
     okt = Okt()
 
@@ -61,4 +62,14 @@ def get_konlpy_text(texts: list[str]) -> list[str]:
     #     print("[okt morphs 함수]")
     #     print(result)
 
+    return results
+'''
+def get_konlpy_text(texts: list[str]) -> list[list[str]]:
+    okt = Okt()
+    results = []
+    
+    for text in texts:
+        morphs_for_text = okt.morphs(text)
+        results.append(morphs_for_text)
+        
     return results

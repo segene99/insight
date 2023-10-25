@@ -64,15 +64,16 @@ def search_documents(question, siteURL= str):
         # loader = TextLoader(documents_db)
         # documents = loader.load()
         context = fetch_content_from_db(siteURL) 
+        print("]]]]]context]]]]]", context)
         documents = [Document(page_content=context)]
     # Split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 0)
         splits = text_splitter.split_documents(documents)
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
         vectorstore = Chroma.from_documents(documents=splits,embedding=embedding_function)
         # retriever = vectorstore.as_retriever()
-        result = vectorstore.similarity_search(question, k=1)
+        result = vectorstore.similarity_search(question, k=5)
         # print("-----------------")
     # LLM
         # llm = ChatOpenAI(model_name="gpt-4", temperature=0.1)
