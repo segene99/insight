@@ -34,28 +34,19 @@ def combined_search(question, siteURLs):
     # return combined_ranking[0]
 
 def rrf(rankings, k=60):
-    # Given you're dealing with single answers, 
-    # the rankings are straightforward. 
-    # For a more complex setting, adapt this function accordingly.
-    print("]]]]]4]]]]]")
-
+    print("=====RRF======")
     rrf_scores = {}
     for rank, item in enumerate(rankings):
-            print("]]]]]5]]]]]")
             rrf_score = 1.0 / (k + rank)
-            # Convert the item to a tuple if it's a list
-            print("]]]]]6]]]]]")
+            # 튜플 -> 리스트 변환
             key = tuple(item) if isinstance(item, list) else item
             if key in rrf_scores:
-                print("]]]]]7]]]]]")
                 rrf_scores[key] += rrf_score
             else:
-                print("]]]]]8]]]]]")
                 rrf_scores[key] = rrf_score
 
 
     # Sorting items based on RRF scores in descending order
     sorted_items = sorted(rrf_scores, key=rrf_scores.get, reverse=True)
-    print("]]]]]9]]]]]")
     return sorted_items
 

@@ -61,20 +61,17 @@ def tokenizer(sent):
 def search_documents(question, siteURL= str):    
     try: 
     # Load the documents
-        # loader = TextLoader(documents_db)
-        # documents = loader.load()
         context = fetch_content_from_db(siteURL) 
-        print("]]]]]context]]]]]", context)
+        print("[context]", context)
         documents = [Document(page_content=context)]
     # Split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 0)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
         splits = text_splitter.split_documents(documents)
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
         vectorstore = Chroma.from_documents(documents=splits,embedding=embedding_function)
-        # retriever = vectorstore.as_retriever()
         result = vectorstore.similarity_search(question, k=5)
-        # print("-----------------")
+        # retriever = vectorstore.as_retriever()
     # LLM
         # llm = ChatOpenAI(model_name="gpt-4", temperature=0.1)
     # Prompt 

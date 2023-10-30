@@ -18,6 +18,7 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     filtered_image_urls = [image_url_obj for image_url_obj in unique_image_urls if not image_url_obj.url.endswith('.gif')]
     # Filter out .gif URLs from the unique set and change "jpg" to "jpeg"
     print("Number of filtered image URLs:", len(filtered_image_urls))
+    texts.append(image_list.productTexts)
     for image_url_obj in filtered_image_urls:
         # Download the image from the URL
         # Extract the URL string

@@ -102,22 +102,23 @@ async def get_answer_from_gpt(message_list: Messages):
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         print("============user_input==========",user_input)
-        
-        # Search through saved text documents
-        # Extracting 'answer' content
-        # search_type = choose_search_type(user_input)
-        # print("***search_type***", search_type)
-        # if 'semantic' in search_type:
-        #     print("============semantic search==========")
-        #     text_received_semantic = search_documents(user_input, message_list.siteUrls)
-        #     answer_content = str(text_received_semantic).replace("content=", "")
-        #     print("============text_received==========",text_received_semantic)
+        '''
+        Search through saved text documents
+        Extracting 'answer' content
+        search_type = choose_search_type(user_input)
+        print("***search_type***", search_type)
+        if 'semantic' in search_type:
+            print("============semantic search==========")
+            text_received_semantic = search_documents(user_input, message_list.siteUrls)
+            answer_content = str(text_received_semantic).replace("content=", "")
+            print("============text_received==========",text_received_semantic)
 
-        # if 'keyword' in search_type:
-        #     print("============keyword search==========")
-        #     text_received_keyword = search_keyword(user_input, message_list.siteUrls)
-        #     print("============text_received==========",text_received_keyword)
-        #     answer_content = text_received_keyword
+        if 'keyword' in search_type:
+            print("============keyword search==========")
+            text_received_keyword = search_keyword(user_input, message_list.siteUrls)
+            print("============text_received==========",text_received_keyword)
+            answer_content = text_received_keyword
+        '''
         answer_content = combined_search(user_input, message_list.siteUrls)
         print("============answer_content==========",answer_content)
         answer_gpt = ask_gpt(user_input, answer_content)
