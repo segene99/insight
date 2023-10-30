@@ -47,3 +47,24 @@ def get_summary_from_gpt(response_dict):
         file.write(" ".join(response.choices[0].message['content']))
 
     return response.choices[0].message['content']
+
+
+def choose_search_type(question: str):
+    system_message = '''
+                        To answer the following question correctly, 
+                        tell me whether keyword search is appropriate or semantic search is appropriate. 
+                        Your answer must be either 'keyword' or 'semantic'.                      
+    '''
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-16k",
+        messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": question}
+        ],
+        temperature=0.0,
+        max_tokens=300,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    return response.choices[0].message['content']

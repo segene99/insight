@@ -7,14 +7,14 @@ def combined_search(question, siteURLs):
     # Step 1: Retrieve Answers
 
     rag_answer = search_documents(question, siteURLs)
-    #print("]]]]]rag_answer]]]]]", rag_answer)
+    print("]]]]]rag_answer]]]]]", rag_answer)
     page_contents = [doc.page_content for doc in rag_answer]
     bm25_answer = search_keyword(question, siteURLs)
-    #print("]]]]]bm25_answer]]]]]", bm25_answer)
+    print("]]]]]bm25_answer]]]]]", bm25_answer)
     
     # Step 2: Use RRF to Combine Results
     combined_ranking = rrf([page_contents, bm25_answer])
-    #print("&&&&combined_ranking&&&&&", combined_ranking[0])
+    print("&&&&combined_ranking&&&&&", combined_ranking[0])
 
     # Step 3: Re-ranking using Cross-Encoder
     # model = CrossEncoder('cross-encoder/stsb-distilroberta-base')  # replace 'model_name_or_path' with your model name or path
@@ -34,28 +34,19 @@ def combined_search(question, siteURLs):
     # return combined_ranking[0]
 
 def rrf(rankings, k=60):
-    # Given you're dealing with single answers, 
-    # the rankings are straightforward. 
-    # For a more complex setting, adapt this function accordingly.
-    print("]]]]]4]]]]]")
-
+    print("=====RRF======")
     rrf_scores = {}
     for rank, item in enumerate(rankings):
-            print("]]]]]5]]]]]")
             rrf_score = 1.0 / (k + rank)
-            # Convert the item to a tuple if it's a list
-            print("]]]]]6]]]]]")
+            # 튜플 -> 리스트 변환
             key = tuple(item) if isinstance(item, list) else item
             if key in rrf_scores:
-                print("]]]]]7]]]]]")
                 rrf_scores[key] += rrf_score
             else:
-                print("]]]]]8]]]]]")
                 rrf_scores[key] = rrf_score
 
 
     # Sorting items based on RRF scores in descending order
     sorted_items = sorted(rrf_scores, key=rrf_scores.get, reverse=True)
-    print("]]]]]9]]]]]")
     return sorted_items
 

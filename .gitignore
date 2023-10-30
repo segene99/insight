@@ -1,8 +1,10 @@
 /venv
 __pycache__
 /key/keys.txt 
+/key/db.txt 
 /detected_texts
 *.pyc
 __pycache__/
 tmp_audio_file.wav
 /tts_audio/output.wav
+/database.py
