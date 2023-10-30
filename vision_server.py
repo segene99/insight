@@ -72,7 +72,7 @@ async def get_text_from_image(image_data: ImageList):
         else:
             print("======pic_to_text IMG 시작======")
             detected_text = pic_to_text(image_data)
-            print("======detected_text======" , detected_text)
+            #print("======detected_text======" , detected_text)
 
             # Get summary from GPT
             # print("======gpt summary 시작======")
@@ -98,19 +98,28 @@ async def get_answer_from_gpt(message_list: Messages):
         
         # Search through saved text documents
         # Extracting 'answer' content
-        if ' ' in user_input:
-            print("============semantic search==========")
-            text_received_semantic = search_documents(user_input, message_list.siteUrls)
-            answer_content = str(text_received_semantic).replace("content=", "")
-            print("============text_received==========",text_received_semantic)
-        else:
-            print("============keyword search==========")
-            text_received_keyword = search_keyword(user_input, message_list.siteUrls)
-            print("============text_received==========",text_received_keyword)
-            answer_content = text_received_keyword
-            
-        results = { "role": "user", "content": answer_content }
+        # search_type = choose_search_type(user_input)
+        # print("***search_type***", search_type)
+        # if 'semantic' in search_type:
+        #     print("============semantic search==========")
+        #     text_received_semantic = search_documents(user_input, message_list.siteUrls)
+        #     answer_content = str(text_received_semantic).replace("content=", "")
+        #     print("============text_received==========",text_received_semantic)
 
+        # if 'keyword' in search_type:
+        #     print("============keyword search==========")
+        #     text_received_keyword = search_keyword(user_input, message_list.siteUrls)
+        #     print("============text_received==========",text_received_keyword)
+        #     answer_content = text_received_keyword
+        answer_content = combined_search(user_input, message_list.siteUrls)
+        #print("============answer_content==========",answer_content)
+        answer_gpt = ask_gpt(user_input, answer_content)
+        
+        # results = { "role": "user", "content": answer_content }
+        results = { "role": "user", "content": answer_gpt }
+
+        end_time = time.time()
+        print(f"======Time taken(answer): {end_time - start_time} seconds=======")
         return results
     
     except Exception as e:

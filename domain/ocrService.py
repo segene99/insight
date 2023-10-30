@@ -27,9 +27,8 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     print("=======2======")
     # Filter out .gif URLs from the unique set
     filtered_image_urls = [image_url_obj for image_url_obj in unique_image_urls if not image_url_obj.url.endswith('.gif')]
-    print("=======3======")
-    # print("Number of filtered image URLs:", len(filtered_image_urls))
-    
+    # Filter out .gif URLs from the unique set and change "jpg" to "jpeg"
+    #print("Number of filtered image URLs:", len(filtered_image_urls))
     for image_url_obj in filtered_image_urls:
         # Download the image from the URL
         # Extract the URL string
@@ -40,16 +39,17 @@ def pic_to_text(image_list: ImageList) -> List[str]:
         image = gvision.Image(content=image_content)
         # For dense text, use document_text_detection
         response = client.document_text_detection(image=image) # pylint: disable=no-member
-        # print("========ocr response======",response)
-        detected_text = response.full_text_annotation.text
+        print("========ocr response======",response)
+        detected_text = response.full_text_annotation.text 
+        #print("========detected_text======",detected_text)
         # Remove existing newline characters and add a newline at the end
         text = detected_text.replace('\n', ' ') + '\n'
         texts.append(text)
         
-    print(texts)
+    #print(texts)
     #OCR data insertion into DB
     insert_ocr(texts, image_list)
-    print(texts)
+    #print(texts)
     # print("=====6=======")
     # # Create a directory to store the text file if it doesn't exist
     # os.makedirs('detected_texts', exist_ok=True)

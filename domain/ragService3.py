@@ -64,6 +64,7 @@ def search_documents(question, siteURL= str):
         # loader = TextLoader(documents_db)
         # documents = loader.load()
         context = fetch_content_from_db(siteURL) 
+        #print("]]]]]context]]]]]", context)
         documents = [Document(page_content=context)]
     # Split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
