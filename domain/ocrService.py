@@ -35,8 +35,10 @@ def pic_to_text(image_list: ImageList) -> List[str]:
         image = gvision.Image(content=image_content)
         # For dense text, use document_text_detection
         response = client.document_text_detection(image=image) # pylint: disable=no-member
-        print("========ocr response======",response)
+        # print("========ocr response======",response)
+        document = response.full_text_annotation
         detected_text = response.full_text_annotation.text 
+        get_document_bounds(document,detected_text)
         #print("========detected_text======",detected_text)
         # Remove existing newline characters and add a newline at the end
         text = detected_text.replace('\n', ' ') + '\n'
@@ -57,3 +59,23 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     #     file.write(" ".join(texts))
     
     return texts
+
+from enum import Enum
+class FeatureType(Enum):
+    PAGE = 1
+    BLOCK = 2
+    PARA = 3
+    WORD = 4
+    SYMBOL = 5
+    
+def get_document_bounds(document, detected_text):
+    bounds = []
+
+    # Collect specified feature bounds by enumerating all document features
+    for page in document.pages:
+        for block in page.blocks:
+            bounds.append(block.bounding_box)
+
+    # The list `bounds` contains the coordinates of the bounding boxes.
+    print("bounds : ", bounds)
+    return bounds
