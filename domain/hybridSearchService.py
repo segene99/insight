@@ -4,6 +4,7 @@ from sentence_transformers.cross_encoder import CrossEncoder
 import asyncio
 
 async def combined_search(question, siteURLs):
+    print("[siteUrls]",siteURLs)
     rag_answer, bm25_answer = await asyncio.gather(
         search_documents(question, siteURLs),
         search_keyword(question, siteURLs)
@@ -11,14 +12,14 @@ async def combined_search(question, siteURLs):
     # Step 1: Retrieve Answers
 
     # rag_answer = search_documents(question, siteURLs)
-    print("]]]]]rag_answer]]]]]")
+    # print("]]]]]rag_answer]]]]]", rag_answer)
     page_contents = [doc.page_content for doc in rag_answer]
     # bm25_answer = search_keyword(question, siteURLs)
-    print("]]]]]bm25_answer]]]]]")
+    # print("]]]]]bm25_answer]]]]]", bm25_answer)
     
     # Step 2: Use RRF to Combine Results
     combined_ranking = rrf([page_contents, bm25_answer])
-    print("&&&&combined_ranking&&&&&", combined_ranking[0])
+    # print("&&&&combined_ranking&&&&&", combined_ranking[0])
 
     # Step 3: Re-ranking using Cross-Encoder
     # model = CrossEncoder('cross-encoder/stsb-distilroberta-base')  # replace 'model_name_or_path' with your model name or path

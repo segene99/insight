@@ -11,7 +11,7 @@ class Question(Base):
     __tablename__ = "question"
 
     id = Column(Integer, primary_key=True)
-    subject = Column(LONGTEXT, nullable=False)
+    subject = Column(String(255), nullable=False, unique=True)
     content = Column(LONGTEXT, nullable=False)
     create_date = Column(DateTime, nullable=False)
 
