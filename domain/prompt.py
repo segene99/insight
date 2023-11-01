@@ -69,7 +69,7 @@ def ask_gpt(question, ocr_text):
 
         response = openai.ChatCompletion.create(
             model="gpt-4",
-            temperature=0.1,
+            temperature=0.5,
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": question}
