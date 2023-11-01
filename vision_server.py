@@ -101,7 +101,10 @@ async def get_answer_from_gpt(message_list: Messages):
     try:
         
         start_time = time.time()
+        if(message_list.siteUrls == ''):
+            return { "role": "user", "content": "오류발생: 페이지 새로고침 해주세요" }
         print("[message_list]", message_list)
+        
         # Extract user input from the message list
         user_input = next((Turn.content for Turn in message_list.messages if Turn.role == "user"), None)
         print("============user_input==========",user_input)

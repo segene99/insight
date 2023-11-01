@@ -61,9 +61,7 @@ def tokenizer(sent):
 async def search_documents(question, siteURL= str):    
     try: 
     # Load the documents
-        print("[siteURL]", siteURL)
         context = fetch_content_from_db(siteURL) 
-        print("[context]", context)
         documents = [Document(page_content=context)]
     # Split documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
