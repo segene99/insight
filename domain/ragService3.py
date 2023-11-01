@@ -58,9 +58,10 @@ file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
 def tokenizer(sent):
     return sent.split(" ")
 
-def search_documents(question, siteURL= str):    
+async def search_documents(question, siteURL= str):    
     try: 
     # Load the documents
+        print("[siteURL]", siteURL)
         context = fetch_content_from_db(siteURL) 
         print("[context]", context)
         documents = [Document(page_content=context)]
