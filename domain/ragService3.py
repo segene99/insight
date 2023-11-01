@@ -64,7 +64,7 @@ async def search_documents(question, siteURL= str):
         context = fetch_content_from_db(siteURL) 
         documents = [Document(page_content=context)]
     # Split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 100)
         splits = text_splitter.split_documents(documents)
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")

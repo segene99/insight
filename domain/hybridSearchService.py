@@ -32,7 +32,12 @@ async def combined_search(question, siteURLs):
     # print("]]]]]ranked_results]]]]]", ranked_results)
     # Return the top-ranked document after re-ranking
     # return ranked_results[0][1]
-    return combined_ranking[0]
+    # return combined_ranking[0]
+    combined_answer = ' '.join(item[1] for item in combined_ranking[:3])
+    return combined_answer
+
+
+
 
 
     # Return the top answer after combining
