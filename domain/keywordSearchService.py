@@ -6,7 +6,8 @@ from domain.koNLPyService import get_konlpy_text
 from domain.prompt import ask_gpt
 import re
 
-def search_keyword(question, siteURL: str):
+
+async def search_keyword(question, siteURL: str):
     texts = fetch_content_from_db(siteURL)
     sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', ' '.join(texts))
 
