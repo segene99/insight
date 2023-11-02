@@ -61,12 +61,10 @@ def tokenizer(sent):
 async def search_documents(question, siteURL= str):    
     try: 
     # Load the documents
-        print("[siteURL]", siteURL)
         context = fetch_content_from_db(siteURL) 
-        print("[context]", context)
         documents = [Document(page_content=context)]
     # Split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 100)
         splits = text_splitter.split_documents(documents)
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
