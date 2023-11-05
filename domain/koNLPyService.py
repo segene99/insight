@@ -64,12 +64,15 @@ def get_konlpy_text(texts: list[str]) -> list[str]:
 
     return results
 '''
-def get_konlpy_text(texts: list[str]) -> list[list[str]]:
+def get_konlpy_text(texts: str) -> list[str]:
     okt = Okt()
-    results = []
+    morphs_for_text = okt.morphs(texts)
+    return morphs_for_text
+    # okt = Okt()
+    # results = []
     
-    for text in texts:
-        morphs_for_text = okt.morphs(text)
-        results.append(morphs_for_text)
+    # # for text in texts:
+    # morphs_for_text = okt.morphs(texts)
+    # results.append(morphs_for_text)
         
-    return results
+    # return results

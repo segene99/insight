@@ -20,6 +20,13 @@ openai.api_key = openai_key_value
 MAX_TOKENS = 16000  # gpt-3.5-turbo 모델의 최대 토큰 수
 OVERLAP_TOKENS = 50  # 문장이 훼손되지 않게 하기 위한 오버랩 토큰 수
 
+def flatten_tuple(t):
+    for item in t:
+        if isinstance(item, tuple):
+            yield from flatten_tuple(item)
+        else:
+            yield item
+
 def split_text(text, max_length, overlap):
     sentences = text.split('.')
     chunks = []
@@ -52,7 +59,7 @@ def is_valid_response(question, ocr_text, response):
     return True
 
 def ask_gpt(question, ocr_text):
-    ocr_text = ' '.join(ocr_text)
+    ocr_text = ' '.join(flatten_tuple(ocr_text))
     text_chunks = split_text(ocr_text, MAX_TOKENS - 300, OVERLAP_TOKENS)
     responses = []
 
@@ -71,7 +78,7 @@ def ask_gpt(question, ocr_text):
 )
 
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo-16k",
             temperature=0.1,
             messages=[
                 {"role": "system", "content": system_message},

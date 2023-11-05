@@ -8,7 +8,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile, File
 from domain.gptService import choose_search_type, get_summary_from_gpt
 from domain.hybridSearchService import combined_search
 from domain.keywordSearchService import search_keyword
-from domain.prompt import ask_gpt
+from domain.prompt2 import ask_gpt
 from domain.ragService3 import search_documents
 # from domain.ragService2 import search_documents
 from fastapi.responses import HTMLResponse
