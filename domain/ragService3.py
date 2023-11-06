@@ -74,8 +74,9 @@ async def search_documents(question, siteURL= str):
     # LLM
         # llm = ChatOpenAI(model_name="gpt-4", temperature=0.1)
     # Prompt 
+        '''
         template = """
-              "You are a kind shopping helper.\n"
+              "You are a kind shopping helper."
               "Be sure to answer the questions in Korean and honorifics based only on the information in the given text. "
               "Don't answer questions you don't know."
               "Do not refer to any other external information or knowledge. Please answer all questions in English in Korean."
@@ -86,7 +87,8 @@ async def search_documents(question, siteURL= str):
             Question: {question}
             Helpful Answer:
         """
-        rag_prompt_custom = PromptTemplate.from_template(template)
+        '''
+        # rag_prompt_custom = PromptTemplate.from_template(template)
 
         # rag_chain = (
         #     {"context": retriever, "question": RunnablePassthrough()} 
@@ -97,9 +99,6 @@ async def search_documents(question, siteURL= str):
         # result = rag_chain.invoke(question)
 
         return result
-    
-    #반환데이터 형태
-    # AIMessage(content='something something')
 
     except IndexError as ie:
         print("IndexError occurred:", str(ie))

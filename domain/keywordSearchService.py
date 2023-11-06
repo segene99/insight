@@ -28,10 +28,11 @@ async def search_keyword(question, siteURL: str):
 
     # Tokenize query in the same way as documents
     tokenized_query = tokenize(question)
-    # print("======tokenized_documents=======", tokenized_documents)
+
     # Get scores for the query
     doc_scores = bm25.get_scores(tokenized_query)
     print("======score=======", doc_scores)
+    
     # Get top N documents
     top_n_documents = bm25.get_top_n(tokenized_query, tokenized_documents, n=7)
 

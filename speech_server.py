@@ -14,7 +14,6 @@ from models import ImageURL, Turn, Messages
 from domain.prompt import ask_gpt
 
 router = APIRouter()
-# router.mount("/static", StaticFiles(directory="static"), name="static")
 
 # keys.txt 파일에서 API 키들을 읽어오는 함수
 def read_keys_from_file(filename):
@@ -34,8 +33,6 @@ openai.api_key = openai_key_value
 
 
 def chat(messages):
-    # # OpenAI의 GPT-3.5-turbo 모델을 사용하여 채팅 완성을 요청하고 응답을 받습니다.
-    # response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
 
     # Specify the path to the directory containing the text files
     directory_path = 'detected_texts'
@@ -45,12 +42,8 @@ def chat(messages):
     # Load and concatenate OCR text from all the detected_text_*.txt files in the specified directory
     ocr_data = load_all_texts(directory_path)
     
-    print("^^^^^", ocr_data)
-
     # Call ask_gpt() function with the concatenated OCR text
     answer = ask_gpt(extracted_answer, ocr_data)
-
-    print('=========', answer)
 
     # OpenAI 응답을 딕셔너리 형태로 변환합니다.
     # resp_dict = response.to_dict_recursive()
