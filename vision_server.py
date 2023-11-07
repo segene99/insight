@@ -3,7 +3,6 @@ import base64
 import statistics
 from typing import List
 from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile, File
-from domain.gptService import choose_search_type, get_summary_from_gpt
 from domain.hybridSearchService import combined_search
 from domain.keywordSearchService import search_keyword
 from domain.prompt2 import ask_gpt
@@ -17,7 +16,8 @@ import os
 from io import BytesIO
 from domain.ocrService import pic_to_text
 from models import * 
-from speech_server import router as speech_router  # 모듈과 변수명을 올바르게 가져옴
+from speech_server import router as speech_router 
+from test_main import router as test_router 
 import logging
 from google.cloud import texttospeech
 from fastapi.responses import JSONResponse
@@ -29,10 +29,13 @@ from crud import check_ocr
 from sqlalchemy.orm import Session
 import models
 import time
+from fastapi.testclient import TestClient
+
 
 # fastapi로 객체 생성
 app = FastAPI()
 app.include_router(speech_router)
+app.include_router(test_router)
 
 # Assuming the template is in a "templates" directory
 templates = Jinja2Templates(directory="templates")  
@@ -123,7 +126,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 # 현재 스크립트가 직접 실행될 때 uvicorn 서버를 시작하고, app 애플리케이션을 사용하여 8000 포트에서 웹 서비스를 제공
 if __name__ == '__main__':

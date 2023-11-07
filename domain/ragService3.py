@@ -32,28 +32,26 @@ from langchain.schema.runnable import RunnablePassthrough
 from crud import fetch_content_from_db
 from models import Document
 
-# 키받는곳: https://platform.openai.com/account/
-# keys.txt 파일에서 API 키들을 읽어오는 함수
-def read_keys_from_file(filename):
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-        openai_key = lines[0].strip().split('=')[1].replace('"', '')
-    return openai_key
+# # 키받는곳: https://platform.openai.com/account/
+# # keys.txt 파일에서 API 키들을 읽어오는 함수
+# def read_keys_from_file(filename):
+#     with open(filename, 'r') as f:
+#         lines = f.readlines()
+#         openai_key = lines[0].strip().split('=')[1].replace('"', '')
+#     return openai_key
 
-# keys.txt path
-keys_txt_path = 'key/keys.txt'
+# # keys.txt path
+# keys_txt_path = 'key/keys.txt'
 
-# keys.txt 파일에서 API 키들을 가져옴
-openai_key_value = read_keys_from_file(keys_txt_path)
+# # keys.txt 파일에서 API 키들을 가져옴
+# openai_key_value = read_keys_from_file(keys_txt_path)
 
-# 가져온 키를 변수에 대입
-openai.api_key = openai_key_value
-os.environ["OPENAI_API_KEY"] = openai.api_key
+# # 가져온 키를 변수에 대입
+# openai.api_key = openai_key_value
+# os.environ["OPENAI_API_KEY"] = openai.api_key
 
 # hugginface tokenizer 병렬처리 해제
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
 
 def tokenizer(sent):
     return sent.split(" ")
