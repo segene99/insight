@@ -44,15 +44,5 @@ def pic_to_text(image_list: ImageList) -> List[str]:
     print(texts)
     #OCR data insertion into DB
     insert_ocr(texts, image_list)
-    print(texts)
-    # print("=====6=======")
-    # # Create a directory to store the text file if it doesn't exist
-    # os.makedirs('detected_texts', exist_ok=True)
-    # print("=====7=======")
-    # # Save all the detected text to a single txt file
-    # file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
-    # with open(file_path, 'w', encoding='utf-8') as file:
-    #     # Join all the texts with a space separator and write to the file
-    #     file.write(" ".join(texts))
     
     return texts

@@ -52,7 +52,7 @@ def is_valid_response(question, ocr_text, response):
     return True
 
 def ask_gpt(question, ocr_text):
-    ocr_text = ' '.join(ocr_text)
+    # ocr_text = ' '.join(ocr_text)
     text_chunks = split_text(ocr_text, MAX_TOKENS - 300, OVERLAP_TOKENS)
     responses = []
 
@@ -68,7 +68,7 @@ def ask_gpt(question, ocr_text):
 )
 
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo-16k",
             temperature=0.1,
             messages=[
                 {"role": "system", "content": system_message},
