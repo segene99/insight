@@ -32,28 +32,26 @@ from langchain.schema.runnable import RunnablePassthrough
 from crud import fetch_content_from_db
 from models import Document
 
-# 키받는곳: https://platform.openai.com/account/
-# keys.txt 파일에서 API 키들을 읽어오는 함수
-def read_keys_from_file(filename):
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-        openai_key = lines[0].strip().split('=')[1].replace('"', '')
-    return openai_key
+# # 키받는곳: https://platform.openai.com/account/
+# # keys.txt 파일에서 API 키들을 읽어오는 함수
+# def read_keys_from_file(filename):
+#     with open(filename, 'r') as f:
+#         lines = f.readlines()
+#         openai_key = lines[0].strip().split('=')[1].replace('"', '')
+#     return openai_key
 
-# keys.txt path
-keys_txt_path = 'key/keys.txt'
+# # keys.txt path
+# keys_txt_path = 'key/keys.txt'
 
-# keys.txt 파일에서 API 키들을 가져옴
-openai_key_value = read_keys_from_file(keys_txt_path)
+# # keys.txt 파일에서 API 키들을 가져옴
+# openai_key_value = read_keys_from_file(keys_txt_path)
 
-# 가져온 키를 변수에 대입
-openai.api_key = openai_key_value
-os.environ["OPENAI_API_KEY"] = openai.api_key
+# # 가져온 키를 변수에 대입
+# openai.api_key = openai_key_value
+# os.environ["OPENAI_API_KEY"] = openai.api_key
 
 # hugginface tokenizer 병렬처리 해제
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-file_path = os.path.join('detected_texts', 'all_detected_texts.txt')
 
 def tokenizer(sent):
     return sent.split(" ")
@@ -64,7 +62,7 @@ async def search_documents(question, siteURL= str):
         context = fetch_content_from_db(siteURL) 
         documents = [Document(page_content=context)]
     # Split documents
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 400, chunk_overlap = 50)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 100)
         splits = text_splitter.split_documents(documents)
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
@@ -74,8 +72,9 @@ async def search_documents(question, siteURL= str):
     # LLM
         # llm = ChatOpenAI(model_name="gpt-4", temperature=0.1)
     # Prompt 
+        '''
         template = """
-              "You are a kind shopping helper.\n"
+              "You are a kind shopping helper."
               "Be sure to answer the questions in Korean and honorifics based only on the information in the given text. "
               "Don't answer questions you don't know."
               "Do not refer to any other external information or knowledge. Please answer all questions in English in Korean."
@@ -86,7 +85,8 @@ async def search_documents(question, siteURL= str):
             Question: {question}
             Helpful Answer:
         """
-        rag_prompt_custom = PromptTemplate.from_template(template)
+        '''
+        # rag_prompt_custom = PromptTemplate.from_template(template)
 
         # rag_chain = (
         #     {"context": retriever, "question": RunnablePassthrough()} 
@@ -97,9 +97,6 @@ async def search_documents(question, siteURL= str):
         # result = rag_chain.invoke(question)
 
         return result
-    
-    #반환데이터 형태
-    # AIMessage(content='something something')
 
     except IndexError as ie:
         print("IndexError occurred:", str(ie))
