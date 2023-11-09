@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 from typing import List
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from fastapi import APIRouter
 
@@ -10,8 +10,7 @@ import openai
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from domain.ttsService import get_audio_from_tts
-from models import AudioConfig, ImageURL, TextRequest, Turn, Messages
+from models import ImageURL, Turn, Messages
 from domain.prompt import ask_gpt
 
 router = APIRouter()
@@ -31,15 +30,6 @@ openai_key_value = read_keys_from_file(keys_txt_path)
 
 # 가져온 키를 변수에 대입
 openai.api_key = openai_key_value
-
-@router.post("/text-to-speech")
-async def text_to_speech(text_request: TextRequest, audio_config: AudioConfig):
-    try:
-        response = get_audio_from_tts(text_request, audio_config)
-        return response
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/transcribe")

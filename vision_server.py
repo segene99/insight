@@ -111,6 +111,14 @@ async def get_answer_from_gpt(message_list: Messages):
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/text-to-speech")
+async def text_to_speech(text_request: TextRequest, audio_config: AudioConfig):
+    try:
+        response = get_audio_from_tts(text_request, audio_config)
+        return response
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 def get_db():
     db = SessionLocal()
