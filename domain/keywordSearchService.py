@@ -34,7 +34,7 @@ async def search_keyword(question, siteURL: str):
     print("======score=======", doc_scores)
     
     # Get top N documents
-    top_n_documents = bm25.get_top_n(tokenized_query, tokenized_documents, n=7)
+    top_n_documents = bm25.get_top_n(tokenized_query, tokenized_documents, n=10)
 
     # Join tokens to form strings for each top document
     top_n_documents_str = [" ".join(doc) for doc in top_n_documents]

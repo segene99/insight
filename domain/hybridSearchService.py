@@ -18,7 +18,7 @@ async def combined_search(question, siteURLs):
     # Step 2: Use RRF to Combine Results
     combined_ranking = rrf(page_contents, bm25_answer)
 
-    return combined_ranking[:5]
+    return combined_ranking
 
 def rrf(rag_rankings, bm25_rankings, k=60):
     # Create a dictionary to store RRF scores

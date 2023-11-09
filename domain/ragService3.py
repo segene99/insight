@@ -67,7 +67,7 @@ async def search_documents(question, siteURL= str):
     # Embed and store splits
         embedding_function = SentenceTransformerEmbeddings(model_name="paraphrase-multilingual-mpnet-base-v2")
         vectorstore = Chroma.from_documents(documents=splits,embedding=embedding_function)
-        result = vectorstore.similarity_search(question, k=5)
+        result = vectorstore.similarity_search(question, k=10)
         # retriever = vectorstore.as_retriever()
     # LLM
         # llm = ChatOpenAI(model_name="gpt-4", temperature=0.1)
