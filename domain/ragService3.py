@@ -79,7 +79,7 @@ async def search_documents(question, siteURL= str):
               "Don't answer questions you don't know."
               "Do not refer to any other external information or knowledge. Please answer all questions in English in Korean."
               "Please respond as politely and kindly as possible to the user"
-              "질문내용에서 '이게'는 '이거'의 의미로 사용됩니다. '이게'를 '이거'로 해석하고 답변해주세요(단 '이 게'일때는 적용하지 마시오). "
+             
               "중복되는 정보가 있으면 모두 알려주세요 ..
             {context}
             Question: {question}
